@@ -1,62 +1,65 @@
-import React, {useEffect, useState} from 'react'
-import { useQuery, useLazyQuery } from '@apollo/client'
-import { LOAD_CLASSROOMS, GET_CLASSROOM_BY_ID} from '../../Graphql/Queries'
-import ClassroomTable from './ClassroomTable'
-import ClassroomForm from './ClassroomForm'
-import { Button, Grid } from '@mui/material'
-
+import React, { useEffect, useState } from "react";
+import { useQuery, useLazyQuery } from "@apollo/client";
+import { LOAD_CLASSROOMS, GET_CLASSROOM_BY_ID } from "../../Graphql/Queries";
+import ClassroomTable from "./ClassroomTable";
+import ClassroomForm from "./ClassroomForm";
+import { Button, Grid } from "@mui/material";
 
 function ClassroomList(props) {
-    const [classrooms, setClassrooms] = useState([])
-    const [classroom, setClassroom] = useState(null)
-    const classroomsResponse = useQuery(LOAD_CLASSROOMS)
-    const [getClassroom, {error, loading, data}] = useLazyQuery(GET_CLASSROOM_BY_ID)
-    const [open, setOpen] = useState(false)
-    const [updateStatus, setUpdateStatus] = useState(false)
-    const handleEdit = (id) => {
-        getClassroom({variables: {id: id}})
-        setUpdateStatus(true);
-        setOpen(true)
-        console.log(id);
+  const [classrooms, setClassrooms] = useState([]);
+  const [classroom, setClassroom] = useState(null);
+  const classroomsResponse = useQuery(LOAD_CLASSROOMS);
+  const [getClassroom, { error, loading, data }] =
+    useLazyQuery(GET_CLASSROOM_BY_ID);
+  const [open, setOpen] = useState(false);
+  const [updateStatus, setUpdateStatus] = useState(false);
+  const handleEdit = (id) => {
+    getClassroom({ variables: { id: id } });
+    setUpdateStatus(true);
+    setOpen(true);
+    console.log(id);
+  };
+  useEffect(() => {
+    data && console.log(data.classroom);
+    data && setClassroom(data.classroom);
+  }, [data]);
+  useEffect(() => {
+    classroomsResponse &&
+      classroomsResponse.data &&
+      setClassrooms(classroomsResponse.data.classrooms);
+    classroomsResponse &&
+      classroomsResponse.error &&
+      console.log(classroomsResponse.error);
+  }, [classroomsResponse]);
+  useEffect(() => {
+    console.log(classroom);
+    if (!open) {
+      setUpdateStatus(false);
+      setClassroom(null);
     }
-    useEffect(()=>{
-        data && console.log(data.classroom)
-        data && setClassroom(data.classroom)
-    }, [data])
-    useEffect(() => {
-        classroomsResponse && classroomsResponse.data && setClassrooms(classroomsResponse.data.classrooms);
-        classroomsResponse && classroomsResponse.error && console.log(classroomsResponse.error);
-    }, [classroomsResponse])
-    useEffect(()=>{
-        console.log(classroom);
-        if(!open){
-            setUpdateStatus(false)
-            setClassroom(null)
-        }
-    },[open])
-    return (
-        <Grid container spacing={2}>
-            <Grid item xs={12} >
-                <Button onClick={()=>setOpen(true)}>open</Button>
-            </Grid>
-            <Grid item xs={12} padding={2}>
-            <ClassroomTable 
-            classrooms = {classrooms} 
-            setOpen = {(bool) => setOpen(bool)} 
-            setUpdateStatus = {(bool) => setUpdateStatus(bool)}
-            handleEdit = {(id) => handleEdit(id)}
-            styledHeadTableCell = {props.styledHeadTableCell}
-            />
-            </Grid>
-            <ClassroomForm 
-            open={open} 
-            setOpen = {(status) => setOpen(status)}
-            updateStatus = {updateStatus}
-            classroom = {classroom}
-            />
-        </Grid>
-    
-  )
+  }, [open]);
+  return (
+    <Grid container spacing={2}>
+      <Grid item xs={12}>
+        <Button onClick={() => setOpen(true)}>open</Button>
+      </Grid>
+      <Grid item xs={12} padding={2}>
+        <ClassroomTable
+          classrooms={classrooms}
+          setOpen={(bool) => setOpen(bool)}
+          setUpdateStatus={(bool) => setUpdateStatus(bool)}
+          handleEdit={(id) => handleEdit(id)}
+          styledHeadTableCell={props.styledHeadTableCell}
+        />
+      </Grid>
+      <ClassroomForm
+        open={open}
+        setOpen={(status) => setOpen(status)}
+        updateStatus={updateStatus}
+        classroom={classroom}
+      />
+    </Grid>
+  );
 }
 
-export default ClassroomList
+export default ClassroomList;
