@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 import Header from "./components/Header";
 import {
@@ -18,6 +18,7 @@ import StudentList from "./components/Student/StudentList";
 import { styled } from "@mui/material/styles";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import { ProtectedRoute } from "./utils/protectedRoute";
+import { useAuth } from "./utils/authProvider";
 
 const errorLink = onError(({ graphqlErrors, networkError }) => {
   if (graphqlErrors) {
@@ -27,17 +28,25 @@ const errorLink = onError(({ graphqlErrors, networkError }) => {
   }
 });
 
-const link = from([
-  errorLink,
-  new HttpLink({ uri: "http://127.0.0.1:8000/graphql" }),
-]);
-
-const client = new ApolloClient({
-  cache: new InMemoryCache(),
-  link: link,
-});
+const createClient = (link) => {
+  return new ApolloClient({
+    cache: new InMemoryCache(),
+    link: link,
+  });
+};
 
 function App() {
+  const { token } = useAuth();
+  const link = from([
+    errorLink,
+    new HttpLink({
+      uri: "http://127.0.0.1:8000/graphql",
+      headers: {
+        Authorization: token ? `Bearer ${token.token}` : "",
+      },
+    }),
+  ]);
+  const [client, setClient] = useState(createClient(link));
   const [darkMode, setDarkMode] = useState(false);
   const StyledHeadTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -56,6 +65,9 @@ function App() {
       mode: darkMode ? "dark" : "light",
     },
   });
+  useEffect(() => {
+    setClient(createClient(link));
+  }, [token]);
   return (
     <ThemeProvider theme={theme}>
       <ApolloProvider client={client}>
@@ -65,7 +77,15 @@ function App() {
 
             {/* protecteed routes */}
             <Route element={<ProtectedRoute />}>
-              <Route path="/" element={<Header />} />
+              <Route
+                path="/"
+                element={
+                  <Header
+                    darkMode={darkMode}
+                    setDarkMode={(bool) => setDarkMode(bool)}
+                  />
+                }
+              />
               <Route
                 path="class"
                 element={

@@ -34,11 +34,11 @@ function StudentList(props) {
     }
   }, [open]);
   return (
-    <Grid container spacing={2}>
+    <Grid container spacing={2} sx={{ p:2 }}>
       <Grid item xs={12}>
         <Button onClick={() => setOpen(true)}>Create</Button>
       </Grid>
-      <Grid item xs={12} padding={2}>
+      <Grid item xs={12} >
         <StudentTable
           students={students}
           handleEdit={(id) => handleEdit(id)}

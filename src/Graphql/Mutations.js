@@ -11,6 +11,11 @@ export const LOGIN_MUTATION = gql`
         }
     } `
 
+export const LOGOUT_MUTATION = gql`
+    mutation{
+        logout
+    }`
+
 export const DELETE_CLASSROOM = gql`
     mutation deleteClassroom(
         $id: ID!

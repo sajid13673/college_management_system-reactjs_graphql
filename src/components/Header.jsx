@@ -15,9 +15,11 @@ import AdbIcon from "@mui/icons-material/Adb";
 import { useNavigate } from "react-router-dom";
 import { FormControlLabel, Switch } from "@mui/material";
 import { styled } from "@mui/material/styles";
+import { useMutation } from "@apollo/client";
+import { LOGOUT_MUTATION } from "../Graphql/Mutations";
+import { useAuth } from "../utils/authProvider";
 
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
-
 const MaterialUISwitch = styled(Switch)(({ theme }) => ({
   width: 62,
   height: 34,
@@ -77,6 +79,8 @@ const MaterialUISwitch = styled(Switch)(({ theme }) => ({
 function Header(props) {
   const user = React.useState(JSON.parse(localStorage.getItem("userData")));
   const [pages, setPages] = React.useState(["class"]);
+  const {setToken, token} = useAuth();
+  const [logout, {data, loading, error}] = useMutation(LOGOUT_MUTATION);
   console.log(user[0].role);
 
   const [anchorElNav, setAnchorElNav] = React.useState(null);
@@ -91,25 +95,30 @@ function Header(props) {
   };
 
   const handleCloseNavMenu = (page) => {
-    // console.log(page);
-    // let role = user[0].role;
-    // role !== 'user' ? navigate(`/${role}/${page}`) : navigate(`/${page}`)
     navigate(`/${page}`);
     setAnchorElNav(null);
   };
-
-  const handleCloseUserMenu = () => {
+  const handleCloseUserMenu = (setting) => {
+    console.log(setting);
+    setting == 'Logout' && logout();
     setAnchorElUser(null);
   };
   React.useEffect(() => {
-    let role = user[0].role;
-    console.log(role);
+    const role = token ? token.role : "";
     if (role == "admin") {
       setPages(["classroom", "teacher", "student"]);
     } else if (role == "teacher") {
       setPages(["student", "class"]);
     }
-  }, []);
+  }, [token]);
+  React.useEffect(()=>{
+    if(data){
+        console.log(data);
+        setToken(null);
+        navigate('/login')
+    }
+    error && console.log(error);
+  },[data, error])
   return (
     <AppBar position="static" sx={{ width: "100%" }}>
       <Container maxWidth="xl">
@@ -231,7 +240,7 @@ function Header(props) {
               onClose={handleCloseUserMenu}
             >
               {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                <MenuItem key={setting} onClick={()=>handleCloseUserMenu(setting)}>
                   <Typography textAlign="center">{setting}</Typography>
                 </MenuItem>
               ))}

@@ -11,7 +11,6 @@ const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
   // State to hold the authentication token
-  // const [token, setToken_] = useState(localStorage.getItem("token"));
   const [token, setToken_] = useReducer((prev, cur) => {
     localStorage.setItem("userData", JSON.stringify(cur));
     return cur;
