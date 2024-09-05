@@ -3,7 +3,8 @@ import { useQuery, useLazyQuery } from "@apollo/client";
 import { LOAD_CLASSROOMS, GET_CLASSROOM_BY_ID } from "../../Graphql/Queries";
 import ClassroomTable from "./ClassroomTable";
 import ClassroomForm from "./ClassroomForm";
-import { Button, Grid } from "@mui/material";
+import { Button, Grid, Icon } from "@mui/material";
+import AddBoxIcon from '@mui/icons-material/AddBox';
 
 function ClassroomList(props) {
   const [classrooms, setClassrooms] = useState([]);
@@ -39,11 +40,18 @@ function ClassroomList(props) {
     }
   }, [open]);
   return (
-    <Grid container spacing={2} sx={{ p:2 }}>
-      <Grid item xs={12}>
-        <Button onClick={() => setOpen(true)}>open</Button>
+    <Grid container spacing={2} sx={{ p: 2 }}>
+      <Grid item xs={12} md={6} sx={{ mx: "auto" }}>
+        <Button
+          sx={{ width: "100%" }}
+          variant="contained"
+          endIcon={<AddBoxIcon/>}
+          onClick={() => setOpen(true)}
+        >
+          create new classroom{" "}
+        </Button>
       </Grid>
-      <Grid item xs={12} >
+      <Grid item xs={12}>
         <ClassroomTable
           classrooms={classrooms}
           setOpen={(bool) => setOpen(bool)}

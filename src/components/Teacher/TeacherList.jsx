@@ -4,6 +4,7 @@ import { GET_ALL_TEACHERS, GET_TEACHER_BY_ID } from "../../Graphql/Queries";
 import TeacherTable from "./TeacherTable";
 import { Button, Grid } from "@mui/material";
 import TeacherForm from "./TeacherForm";
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
 
 function TeacherList(props) {
   const teachersResponse = useQuery(GET_ALL_TEACHERS);
@@ -34,11 +35,18 @@ function TeacherList(props) {
     }
   }, [open]);
   return (
-    <Grid container spacing={2} sx={{ p:2 }}>
-      <Grid item xs={12}>
-        <Button onClick={() => setOpen(true)}>Create</Button>
+    <Grid container spacing={2} sx={{ p: 2 }}>
+      <Grid item xs={12} md={6} sx={{ mx: "auto" }}>
+        <Button
+          sx={{ width: "100%" }}
+          variant="contained"
+          endIcon={<PersonAddIcon/>}
+          onClick={() => setOpen(true)}
+        >
+          Create new teacher
+        </Button>
       </Grid>
-      <Grid item xs={12} >
+      <Grid item xs={12}>
         <TeacherTable
           teachers={teachers}
           handleEdit={(id) => handleEdit(id)}

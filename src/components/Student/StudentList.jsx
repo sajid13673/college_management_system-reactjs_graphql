@@ -4,6 +4,7 @@ import { GET_ALL_STUDENTS, GET_STUDENT_BY_ID } from "../../Graphql/Queries";
 import StudentTable from "./StudentTable";
 import { Button, Grid } from "@mui/material";
 import StudentForm from "./StudentForm";
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
 
 function StudentList(props) {
   const StudentsResponse = useQuery(GET_ALL_STUDENTS);
@@ -34,11 +35,18 @@ function StudentList(props) {
     }
   }, [open]);
   return (
-    <Grid container spacing={2} sx={{ p:2 }}>
-      <Grid item xs={12}>
-        <Button onClick={() => setOpen(true)}>Create</Button>
+    <Grid container spacing={2} sx={{ p: 2 }}>
+      <Grid item xs={12} md={6} sx={{ mx: "auto" }}>
+        <Button
+          sx={{ width: "100%" }}
+          variant="contained"
+          endIcon={<PersonAddIcon/>}
+          onClick={() => setOpen(true)}
+        >
+          Create new student
+        </Button>
       </Grid>
-      <Grid item xs={12} >
+      <Grid item xs={12}>
         <StudentTable
           students={students}
           handleEdit={(id) => handleEdit(id)}
