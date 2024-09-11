@@ -56,6 +56,7 @@ function App() {
       fontFamily: "Poppins",
     },
     [`&.${tableCellClasses.body}`]: {
+      backgroundColor: darkMode ? '#FFFFFF29' : '#eef7ff',
       fontFamily: "Poppins",
       fontSize: 14,
     },
