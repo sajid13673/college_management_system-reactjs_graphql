@@ -1,16 +1,15 @@
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { Button, IconButton, Tooltip, Typography } from "@mui/material";
+import { IconButton, Tooltip, Typography } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useMutation } from "@apollo/client";
 import { DELETE_USER } from "../../Graphql/Mutations";
 import EditIcon from "@mui/icons-material/Edit";
-import { useState } from "react";
+import { useAuth } from "../../utils/authProvider";
 
 export default function StudentTable({
   students,
@@ -19,6 +18,7 @@ export default function StudentTable({
 }) {
   const StyledHeadTableCell = styledHeadTableCell;
   const [deleteStudent, { error }] = useMutation(DELETE_USER);
+  const {token} = useAuth();
   const deleteStudentroom = (id) => {
     deleteStudent({
       variables: {
@@ -47,9 +47,9 @@ export default function StudentTable({
               Date of birth
             </StyledHeadTableCell>
             <StyledHeadTableCell align="center">classrooms</StyledHeadTableCell>
-            <StyledHeadTableCell align="center" colSpan={2}>
+            {token.role == 'admin'&& <StyledHeadTableCell align="center" colSpan={2}>
               actions
-            </StyledHeadTableCell>
+            </StyledHeadTableCell>}
           </TableRow>
         </TableHead>
         <TableBody>
@@ -80,7 +80,9 @@ export default function StudentTable({
                   </Typography>
                 ))}
               </StyledHeadTableCell>
-              <StyledHeadTableCell align="center">
+              {token.role == 'admin' &&
+               <>
+               <StyledHeadTableCell align="center">
                 <Tooltip title="Edit Student">
                   <IconButton onClick={() => handleEditStudent(row.id)}>
                     <EditIcon />
@@ -97,6 +99,8 @@ export default function StudentTable({
                   </IconButton>
                 </Tooltip>
               </StyledHeadTableCell>
+              </>
+              }
             </TableRow>
           ))}
         </TableBody>

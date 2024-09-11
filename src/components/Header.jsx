@@ -120,8 +120,8 @@ function Header(props) {
     error && console.log(error);
   },[data, error])
   return (
-    <AppBar position="static" sx={{ width: "100%" }}>
-      <Container maxWidth="xl">
+    <AppBar position="static" sx={{ height: '10vh'}}>
+      <Container maxWidth="xl" sx={{ mr:4 }}>
         <Toolbar disableGutters>
           <AdbIcon sx={{ display: { xs: "none", md: "flex" }, mr: 1 }} />
           <Typography
