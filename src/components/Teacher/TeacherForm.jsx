@@ -25,7 +25,7 @@ import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
 import { useQuery } from "@apollo/client";
-import { LOAD_CLASSROOMS } from "../../Graphql/Queries";
+import { GET_ALL_CLASSROOMS } from "../../Graphql/Queries";
 
 function TeacherForm({
   teacher,
@@ -41,7 +41,7 @@ function TeacherForm({
   const handleChange = (event, newValue) => {
     setTabValue(newValue);
   };
-  const { error, loading, data } = useQuery(LOAD_CLASSROOMS);
+  const { error, loading, data } = useQuery(GET_ALL_CLASSROOMS);
   const [classrooms, setClassrooms] = useState([]);
   const [selectedValues, setSelectedValues] = useState([]);
   const [createTeacher, createResonse] = useMutation(CREATE_TEACHER_MUTATION);
@@ -124,8 +124,8 @@ function TeacherForm({
     }
   }, [teacher, updateStatus]);
   useEffect(() => {
-    data && console.log(data.classrooms);
-    data && setClassrooms(data.classrooms);
+    data && console.log(data.allClassrooms);
+    data && setClassrooms(data.allClassrooms);
     error && console.log(error.message);
   }, [data, error]);
   useEffect(() => {

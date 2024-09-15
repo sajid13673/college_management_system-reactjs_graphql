@@ -32,7 +32,7 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import moment from "moment/moment";
 import dayjs from "dayjs";
 import { useQuery } from "@apollo/client";
-import { LOAD_CLASSROOMS } from "../../Graphql/Queries";
+import { GET_ALL_CLASSROOMS } from "../../Graphql/Queries";
 
 function StudentForm({
   updateStatus,
@@ -54,7 +54,7 @@ function StudentForm({
     let date = moment(value.toDate()).format("YYYY-MM-DD");
     formik.setFieldValue("date_of_birth", date);
   };
-  const { error, loading, data } = useQuery(LOAD_CLASSROOMS);
+  const { error, loading, data } = useQuery(GET_ALL_CLASSROOMS);
   const [selectedValues, setSelectedValues] = useState([]);
   const [classrooms, setClassrooms] = useState([]);
   const [createStudent, createResponse] = useMutation(CREATE_STUDENT_MUTATION);
@@ -136,8 +136,8 @@ function StudentForm({
     }
   }, [student, updateStatus]);
   useEffect(() => {
-    data && console.log(data.classrooms);
-    data && setClassrooms(data.classrooms);
+    data && console.log(data.allClassrooms);
+    data && setClassrooms(data.allClassrooms);
     error && console.log(error.message);
   }, [data, error]);
   useEffect(() => {

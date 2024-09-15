@@ -15,8 +15,16 @@ export const LOAD_CLASSROOMS = gql`
                 lastPage,
             }
         }
+    } `
+export const GET_ALL_CLASSROOMS = gql`
+    query{
+        allClassrooms{
+            id
+            name
+            year
+        }
     }
-`
+    `
 export const GET_CLASSROOM_BY_ID = gql`
     query($id: ID!) {
         classroom(id: $id) {
