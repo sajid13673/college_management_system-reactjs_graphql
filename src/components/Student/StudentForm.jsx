@@ -34,24 +34,65 @@ import dayjs from "dayjs";
 import { useQuery } from "@apollo/client";
 import { LOAD_CLASSROOMS } from "../../Graphql/Queries";
 
-function StudentForm({updateStatus, student, open, setOpen}) {
-  const [value, setValue] = useState("1");
+function StudentForm({
+  updateStatus,
+  student,
+  open,
+  setOpen,
+  ErrorMessage,
+  validateEmail,
+  handleGetStudents,
+}) {
+  const [tabValue, setTabValue] = useState("1");
   const handleChange = (event, newValue) => {
-    setValue(newValue);
+    setTabValue(newValue);
   };
-  const handleDateChange = (value) => {
+  const handleDateChange = (value, error) => {
+    error.validationError && console.log(error.validationError);
+    error.validationError &&
+      formik.setFieldError("date_of_birth", "Invalide date", false);
     let date = moment(value.toDate()).format("YYYY-MM-DD");
     formik.setFieldValue("date_of_birth", date);
   };
   const { error, loading, data } = useQuery(LOAD_CLASSROOMS);
   const [selectedValues, setSelectedValues] = useState([]);
   const [classrooms, setClassrooms] = useState([]);
-  const [createStudent, { createErrors }] = useMutation(
-    CREATE_STUDENT_MUTATION
-  );
-  const [updateStudent, { updateErrors }] = useMutation(
-    UPDATE_STUDENT_MUTATION
-  );
+  const [createStudent, createResponse] = useMutation(CREATE_STUDENT_MUTATION);
+  const [updateStudent, updateResponse] = useMutation(UPDATE_STUDENT_MUTATION);
+  let errors = {};
+  const validate = (values) => {
+    if (!updateStatus) {
+      if (!values.email) {
+        errors.email = "Required";
+      } else if (validateEmail(values.email)) {
+        errors.email = "Please enter a valid email";
+      }
+      if (!values.password) {
+        errors.password = "Required";
+      } else if (values.password.length < 8) {
+        errors.password = "Password should have minimum 8 characters";
+      }
+    }
+    if (!values.name) {
+      errors.name = "Required";
+    }
+    if (!values.phone_number) {
+      errors.phone_number = "Required";
+    } else if (
+      !/^[0-9]*$/.test(values.phone_number) ||
+      values.phone_number.length < 10 ||
+      values.phone_number.length > 13
+    ) {
+      errors.phone_number = `Please enter a valid year, eg:- 0777123456`;
+    }
+    if (!values.address) {
+      errors.address = "Required";
+    }
+    if (!values.date_of_birth) {
+      errors.date_of_birth = "Required";
+    }
+    return errors;
+  };
   const formik = useFormik({
     initialValues: {
       id: "",
@@ -63,6 +104,7 @@ function StudentForm({updateStatus, student, open, setOpen}) {
       classrooms: [],
       date_of_birth: "",
     },
+    validate: validate,
     onSubmit: (values) => {
       selectedValues.forEach((element) => {
         values.classrooms.push(Number(element.id));
@@ -79,22 +121,55 @@ function StudentForm({updateStatus, student, open, setOpen}) {
   };
   useEffect(() => {
     if (updateStatus && student) {
-      setValue("2");
-      formik.setFieldValue("id", student.id);
-      formik.setFieldValue("name", student.name);
-      formik.setFieldValue("phone_number", student.phone_number);
-      formik.setFieldValue("address", student.address);
-      formik.setFieldValue("date_of_birth", student.date_of_birth);
+      setTabValue("2");
+      formik.setValues({
+        ...formik.values,
+        id: student.id,
+        name: student.name,
+        phone_number: student.phone_number,
+        address: student.address,
+        date_of_birth: student.date_of_birth,
+      });
       setSelectedValues(student.classrooms);
     } else {
-      setValue("1");
-      formik.resetForm();
+      setTabValue("1");
     }
   }, [student, updateStatus]);
   useEffect(() => {
     data && console.log(data.classrooms);
     data && setClassrooms(data.classrooms);
-  }, [data]);
+    error && console.log(error.message);
+  }, [data, error]);
+  useEffect(() => {
+    if (createResponse.error || updateResponse.error) {
+      const validationErr = createResponse.error
+        ? createResponse.error.graphQLErrors[0].extensions?.validation
+        : updateResponse.error.graphQLErrors[0].extensions?.validation;
+      if (validationErr) {
+        validationErr["input.user.create.email"] &&
+          (formik.setFieldError("email", "Email already exists"),
+          setTabValue("1"));
+        validationErr["input.phone_number"] &&
+          formik.setFieldError("phone_number", "Phone number already exists");
+      }
+    }
+    createResponse.data && console.log("createResponse.data");
+    (createResponse.data || updateResponse.data) &&
+      (console.log("response.data"), handleGetStudents(), setOpen(false));
+  }, [
+    createResponse.error,
+    createResponse.data,
+    updateResponse.data,
+    updateResponse.error,
+  ]);
+  useEffect(() => {
+    open &&
+      (console.log(formik.values.classrooms), console.log(selectedValues));
+    !open &&
+      ((formik.values.classrooms.length = 0),
+      formik.resetForm(),
+      setSelectedValues([]));
+  }, [open]);
   return (
     <Modal
       open={open}
@@ -103,11 +178,7 @@ function StudentForm({updateStatus, student, open, setOpen}) {
       aria-describedby="modal-modal-description"
     >
       <Container className="pa-2" maxWidth="sm" style={{ background: "white" }}>
-        {/* <Tabs value={value} onChange={handleChange} aria-label="icon tabs example">
-      <Tab icon={<AccountCircleIcon />} aria-label="phone" />
-      <Tab icon={<LoginIcon />} aria-label="favorite" />
-    </Tabs> */}
-        <TabContext value={value}>
+        <TabContext value={tabValue}>
           <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
             <TabList
               onChange={handleChange}
@@ -129,7 +200,6 @@ function StudentForm({updateStatus, student, open, setOpen}) {
                   {updateStatus ? "UPDATE STUDENT" : "CREATE STUDENT"}
                 </Typography>
               </Grid>
-              {/* <h1>Add Member</h1> */}
               <Grid container spacing={2}>
                 <Grid item={true} xs={12}>
                   <FormControl>
@@ -143,7 +213,7 @@ function StudentForm({updateStatus, student, open, setOpen}) {
                       onChange={formik.handleChange}
                     />
                     {formik.errors.email ? (
-                      <div className="error">{formik.errors.email}</div>
+                      <ErrorMessage>{formik.errors.email}</ErrorMessage>
                     ) : null}
                   </FormControl>
                 </Grid>
@@ -159,7 +229,7 @@ function StudentForm({updateStatus, student, open, setOpen}) {
                       onChange={formik.handleChange}
                     />
                     {formik.errors.password ? (
-                      <div className="error">{formik.errors.password}</div>
+                      <ErrorMessage>{formik.errors.password}</ErrorMessage>
                     ) : null}
                   </FormControl>
                 </Grid>
@@ -171,7 +241,6 @@ function StudentForm({updateStatus, student, open, setOpen}) {
                   {updateStatus ? "UPDATE STUDENT" : "CREATE STUDENT"}
                 </Typography>
               </Grid>
-              {/* <h1>Add Member</h1> */}
               <Grid container spacing={2}>
                 <Grid item={true} xs={12}>
                   <FormControl>
@@ -185,7 +254,7 @@ function StudentForm({updateStatus, student, open, setOpen}) {
                       onChange={formik.handleChange}
                     />
                     {formik.errors.name ? (
-                      <div className="error">{formik.errors.name}</div>
+                      <ErrorMessage>{formik.errors.name}</ErrorMessage>
                     ) : null}
                   </FormControl>
                 </Grid>
@@ -201,7 +270,7 @@ function StudentForm({updateStatus, student, open, setOpen}) {
                       onChange={formik.handleChange}
                     />
                     {formik.errors.phone_number ? (
-                      <div className="error">{formik.errors.phone_number}</div>
+                      <ErrorMessage>{formik.errors.phone_number}</ErrorMessage>
                     ) : null}
                   </FormControl>
                 </Grid>
@@ -217,7 +286,7 @@ function StudentForm({updateStatus, student, open, setOpen}) {
                       onChange={formik.handleChange}
                     />
                     {formik.errors.address ? (
-                      <div className="error">{formik.errors.address}</div>
+                      <ErrorMessage>{formik.errors.address}</ErrorMessage>
                     ) : null}
                   </FormControl>
                 </Grid>
@@ -228,15 +297,18 @@ function StudentForm({updateStatus, student, open, setOpen}) {
                     <DemoContainer components={["DatePicker"]}>
                       <DatePicker
                         label="Basic date picker"
-                        onChange={(newValue) => handleDateChange(newValue)}
+                        onChange={(newValue, error) =>
+                          handleDateChange(newValue, error)
+                        }
                         openTo="year"
                         format="DD/MM/YYYY"
-                        value={
-                          student && dayjs(student.date_of_birth)
-                        }
+                        value={student && dayjs(student.date_of_birth)}
                       />
                     </DemoContainer>
                   </LocalizationProvider>
+                  {formik.errors.date_of_birth ? (
+                    <ErrorMessage>{formik.errors.date_of_birth}</ErrorMessage>
+                  ) : null}
                 </FormControl>
                 <Typography>Classrooms</Typography>
                 {student &&

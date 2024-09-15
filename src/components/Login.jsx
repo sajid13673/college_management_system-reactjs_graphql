@@ -1,13 +1,4 @@
 import React, { useEffect } from "react";
-import {
-  Button,
-  Card,
-  FormControl,
-  IconButton,
-  Input,
-  InputAdornment,
-  InputLabel,
-} from "@material-ui/core";
 import { Visibility, VisibilityOff } from "@material-ui/icons";
 import { useFormik } from "formik";
 import { LOGIN_MUTATION } from "../Graphql/Mutations";
@@ -15,32 +6,53 @@ import { useMutation } from "@apollo/client";
 import { useAuth } from "../utils/authProvider";
 import { useNavigate } from "react-router-dom";
 import {
+  Alert,
   Avatar,
   Box,
+  Button,
+  Card,
   CardActions,
   CardContent,
+  CircularProgress,
+  FormControl,
+  IconButton,
+  Input,
+  InputAdornment,
+  InputLabel,
+  styled,
+  Typography,
 } from "@mui/material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
-function Login() {
+function Login(props) {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = React.useState(false);
   const handleClickShowPassword = () => setShowPassword((show) => !show);
   const { setToken, token } = useAuth();
   const [login, { data, loading, error }] = useMutation(LOGIN_MUTATION);
+  const validate = (values) => {
+    let errors = {};
+    if (!values.email) {
+      errors.email = "Required";
+    } else if (props.validateEmail(values.email)) {
+      errors.email = "Invalid email address";
+    }
+    if (!values.password) {
+      errors.password = "Required";
+    }
+    return errors;
+  };
   const formik = useFormik({
     initialValues: {
       email: "",
       password: "",
     },
+    validate: validate,
     onSubmit: (values) => {
       console.log(values);
       login({
         variables: values,
       });
-      if (error) {
-        console.log(error);
-      }
     },
   });
   useEffect(() => {
@@ -48,14 +60,18 @@ function Login() {
       console.log(data.login);
       setToken(data.login);
     }
-  }, [data]);
+    error && console.log(error.message);
+  }, [data, error]);
   useEffect(() => {
     token && navigate("/");
   }, [token]);
-
+  const ErrorMessage = styled(Typography)({
+    color: "red",
+    fontSize: "small",
+    fontStyle: "italic",
+  });
   return (
     <form onSubmit={formik.handleSubmit}>
-      {/* <Grid  sx={{ background: 'red', height: '100vh' }}> */}
       <Box
         sx={{
           display: "flex",
@@ -65,7 +81,7 @@ function Login() {
         }}
       >
         <Card
-          variant="contained"
+          variant="outlined"
           style={{
             padding: "20px",
             height: "50vh",
@@ -84,7 +100,7 @@ function Login() {
             <Avatar
               sx={{ mx: "auto", width: 60, height: 60, bgcolor: "#3f51b5" }}
             >
-              <AccountCircleIcon sx={{ width: 60, height: 60 }} />
+              <AccountCircleIcon style={{ width: 60, height: 60 }} />
             </Avatar>
             <FormControl>
               <InputLabel htmlFor="my-input">Email address</InputLabel>
@@ -97,7 +113,7 @@ function Login() {
                 onChange={formik.handleChange}
               />
               {formik.errors.email ? (
-                <div className="error">{formik.errors.email}</div>
+                <ErrorMessage>{formik.errors.email}</ErrorMessage>
               ) : null}
             </FormControl>
             <FormControl variant="standard">
@@ -105,6 +121,7 @@ function Login() {
                 Password
               </InputLabel>
               <Input
+                error={formik.errors.password}
                 id="standard-adornment-password"
                 type={showPassword ? "text" : "password"}
                 name="password"
@@ -123,19 +140,33 @@ function Login() {
                 }
               />
               {formik.errors.password ? (
-                <div className="error">{formik.errors.password}</div>
+                <ErrorMessage> {formik.errors.password}</ErrorMessage>
               ) : null}
             </FormControl>
+            <Alert
+              sx={{ display: !error && "none", p: 0.4 }}
+              variant="filled"
+              severity="error"
+            >
+              <Typography sx={{ fontSize: "x-small" }}>
+                {error && error.message}
+              </Typography>
+            </Alert>
           </CardContent>
           <CardActions sx={{ mt: "auto" }}>
-            <Button
-              style={{ width: "100%" }}
-              variant="contained"
-              color="primary"
-              type="submit"
-            >
-              Login
-            </Button>
+            {!loading ? (
+              <Button
+                disabled={loading}
+                style={{ width: "100%" }}
+                variant="contained"
+                color="primary"
+                type="submit"
+              >
+                Login
+              </Button>
+            ) : (
+              <CircularProgress sx={{ mx: "auto" }} />
+            )}
           </CardActions>
         </Card>
       </Box>

@@ -10,14 +10,16 @@ import { useMutation } from "@apollo/client";
 import { DELETE_USER } from "../../Graphql/Mutations";
 import EditIcon from "@mui/icons-material/Edit";
 import { useAuth } from "../../utils/authProvider";
+import { useEffect } from "react";
 
 export default function StudentTable({
   students,
   styledHeadTableCell,
   handleEdit,
+  handleGetStudents
 }) {
   const StyledHeadTableCell = styledHeadTableCell;
-  const [deleteStudent, { error }] = useMutation(DELETE_USER);
+  const [deleteStudent, {error, loading, data}] = useMutation(DELETE_USER);
   const {token} = useAuth();
   const deleteStudentroom = (id) => {
     deleteStudent({
@@ -32,6 +34,10 @@ export default function StudentTable({
   const handleEditStudent = (id) => {
     handleEdit(id);
   };
+  useEffect(()=>{
+    error && console.log(error.message);
+    data && handleGetStudents();
+  },[data, error])
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">

@@ -1,19 +1,19 @@
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { Button, IconButton, Tooltip, Typography } from "@mui/material";
+import { IconButton, Tooltip, Typography } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useMutation } from "@apollo/client";
 import { DELETE_USER } from "../../Graphql/Mutations";
 import EditIcon from "@mui/icons-material/Edit";
+import { useEffect } from "react";
 
 export default function TeacherTable(props) {
   const StyledHeadTableCell = props.styledHeadTableCell;
-  const [deleteClass, { error }] = useMutation(DELETE_USER);
+  const [deleteClass, { error, loading, data }] = useMutation(DELETE_USER);
   const deleteClassroom = (id) => {
     deleteClass({
       variables: {
@@ -27,6 +27,10 @@ export default function TeacherTable(props) {
   const handleEdit = (id) => {
     props.handleEdit(id);
   };
+  useEffect(() => {
+    error && console.log(error.message);
+    data && props.handleGetTeachers();
+  }, [error, data]);
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">

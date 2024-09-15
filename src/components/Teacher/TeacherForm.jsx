@@ -9,7 +9,6 @@ import {
   InputLabel,
   Modal,
   Tab,
-  Tabs,
   TextField,
   Typography,
 } from "@mui/material";
@@ -28,25 +27,56 @@ import TabPanel from "@mui/lab/TabPanel";
 import { useQuery } from "@apollo/client";
 import { LOAD_CLASSROOMS } from "../../Graphql/Queries";
 
-function TeacherForm({ teacher, updateStatus, open, setOpen }) {
-  const [value, setValue] = useState("1");
+function TeacherForm({
+  teacher,
+  updateStatus,
+  open,
+  setOpen,
+  ErrorMessage,
+  validateEmail,
+  handleGetTeachers,
+}) {
+  const [tabValue, setTabValue] = useState("1");
 
   const handleChange = (event, newValue) => {
-    setValue(newValue);
+    setTabValue(newValue);
   };
   const { error, loading, data } = useQuery(LOAD_CLASSROOMS);
   const [classrooms, setClassrooms] = useState([]);
   const [selectedValues, setSelectedValues] = useState([]);
-  const [createTeacher, { createErrors }] = useMutation(
-    CREATE_TEACHER_MUTATION
-  );
-  const [updateTeacher, { updateErrors }] = useMutation(
-    UPDATE_TEACHER_MUTATION
-  );
-  const options = classrooms.map((option) => ({
-    id: option.id,
-    label: option.name + ` (${option.year})`,
-  }));
+  const [createTeacher, createResonse] = useMutation(CREATE_TEACHER_MUTATION);
+  const [updateTeacher, updateResponse] = useMutation(UPDATE_TEACHER_MUTATION);
+  let errors = {};
+  const validate = (values) => {
+    if (!updateStatus) {
+      if (!values.email) {
+        errors.email = "Required";
+      } else if (validateEmail(values.email)) {
+        errors.email = "Please enter a valid email";
+      }
+      if (!values.password) {
+        errors.password = "Required";
+      } else if (values.password.length < 8) {
+        errors.password = "Password should have minimum 8 characters";
+      }
+    }
+    if (!values.name) {
+      errors.name = "Required";
+    }
+    if (!values.phone_number) {
+      errors.phone_number = "Required";
+    } else if (
+      !/^[0-9]*$/.test(values.phone_number) ||
+      values.phone_number.length < 10 ||
+      values.phone_number.length > 13
+    ) {
+      errors.phone_number = `Enter a valid phone number, eg:- 0777123456`;
+    }
+    if (!values.address) {
+      errors.address = "Required";
+    }
+    return errors;
+  };
   const formik = useFormik({
     initialValues: {
       id: "",
@@ -57,6 +87,7 @@ function TeacherForm({ teacher, updateStatus, open, setOpen }) {
       address: "",
       classrooms: [],
     },
+    validate: validate,
     onSubmit: (values) => {
       selectedValues.forEach((element) => {
         values.classrooms.push(Number(element.id));
@@ -74,21 +105,59 @@ function TeacherForm({ teacher, updateStatus, open, setOpen }) {
   };
   useEffect(() => {
     if (updateStatus && teacher) {
-      setValue("2");
-      formik.setFieldValue("id", teacher.id);
-      formik.setFieldValue("name", teacher.name);
-      formik.setFieldValue("phone_number", teacher.phone_number);
-      formik.setFieldValue("address", teacher.address);
+      setTabValue("2");
+      // formik.setFieldValue("id", teacher.id);
+      // formik.setFieldValue("name", teacher.name);
+      // formik.setFieldValue("phone_number", teacher.phone_number);
+      // formik.setFieldValue("address", teacher.address);
+      formik.setValues({
+        ...formik.values,
+        id: teacher.id,
+        name: teacher.name,
+        phone_number: teacher.phone_number,
+        address: teacher.address,
+      });
       setSelectedValues(teacher.classrooms);
     } else {
-      setValue("1");
+      setTabValue("1");
       formik.resetForm();
     }
   }, [teacher, updateStatus]);
   useEffect(() => {
     data && console.log(data.classrooms);
     data && setClassrooms(data.classrooms);
-  }, [data]);
+    error && console.log(error.message);
+  }, [data, error]);
+  useEffect(() => {
+    if (createResonse.error || updateResponse.error) {
+      const validationErr = createResonse.error
+        ? createResonse.error.graphQLErrors[0].extensions?.validation
+        : updateResponse.error.graphQLErrors[0].extensions?.validation;
+      if (validationErr) {
+        validationErr["input.user.create.email"] &&
+          (formik.setFieldError("email", "Email already exists"),
+          setTabValue("1"));
+        validationErr["input.phone_number"] &&
+          formik.setFieldError("phone_number", "Phone number already exists");
+      }
+    }
+    (createResonse.data || updateResponse.data) &&
+      (console.log(createResonse.data), handleGetTeachers(), setOpen(false));
+  }, [
+    createResonse.error,
+    createResonse.data,
+    updateResponse.data,
+    updateResponse.error,
+  ]);
+  useEffect(() => {
+    open &&
+      (console.log(formik.values.classrooms), console.log(selectedValues));
+    !open &&
+      ((formik.values.classrooms.length = 0),
+      formik.resetForm(),
+      setSelectedValues([]));
+  }, [open]);
+
   return (
     <Modal
       open={open}
@@ -97,11 +166,7 @@ function TeacherForm({ teacher, updateStatus, open, setOpen }) {
       aria-describedby="modal-modal-description"
     >
       <Container className="pa-2" maxWidth="sm" style={{ background: "white" }}>
-        {/* <Tabs value={value} onChange={handleChange} aria-label="icon tabs example">
-      <Tab icon={<AccountCircleIcon />} aria-label="phone" />
-      <Tab icon={<LoginIcon />} aria-label="favorite" />
-    </Tabs> */}
-        <TabContext value={value}>
+        <TabContext value={tabValue}>
           <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
             <TabList
               onChange={handleChange}
@@ -129,7 +194,7 @@ function TeacherForm({ teacher, updateStatus, open, setOpen }) {
                   <FormControl>
                     <InputLabel htmlFor="my-input">email</InputLabel>
                     <Input
-                      error={formik.errors.email}
+                      error={"email" in formik.errors}
                       name="email"
                       type="text"
                       aria-describedby="my-helper-text"
@@ -137,7 +202,7 @@ function TeacherForm({ teacher, updateStatus, open, setOpen }) {
                       onChange={formik.handleChange}
                     />
                     {formik.errors.email ? (
-                      <div className="error">{formik.errors.email}</div>
+                      <ErrorMessage>{formik.errors.email}</ErrorMessage>
                     ) : null}
                   </FormControl>
                 </Grid>
@@ -145,7 +210,7 @@ function TeacherForm({ teacher, updateStatus, open, setOpen }) {
                   <FormControl>
                     <InputLabel htmlFor="my-input">Password</InputLabel>
                     <Input
-                      error={formik.errors.password}
+                      error={"password" in formik.errors}
                       name="password"
                       type="text"
                       aria-describedby="my-helper-text"
@@ -153,7 +218,7 @@ function TeacherForm({ teacher, updateStatus, open, setOpen }) {
                       onChange={formik.handleChange}
                     />
                     {formik.errors.password ? (
-                      <div className="error">{formik.errors.password}</div>
+                      <ErrorMessage>{formik.errors.password}</ErrorMessage>
                     ) : null}
                   </FormControl>
                 </Grid>
@@ -165,13 +230,12 @@ function TeacherForm({ teacher, updateStatus, open, setOpen }) {
                   {updateStatus ? "UPDATE TEACHER" : "CREATE TEACHER"}
                 </Typography>
               </Grid>
-              {/* <h1>Add Member</h1> */}
               <Grid container spacing={2}>
                 <Grid item={true} xs={12}>
                   <FormControl>
                     <InputLabel htmlFor="my-input">Name</InputLabel>
                     <Input
-                      error={formik.errors.name}
+                      error={"name" in formik.errors}
                       name="name"
                       type="text"
                       aria-describedby="my-helper-text"
@@ -179,7 +243,7 @@ function TeacherForm({ teacher, updateStatus, open, setOpen }) {
                       onChange={formik.handleChange}
                     />
                     {formik.errors.name ? (
-                      <div className="error">{formik.errors.name}</div>
+                      <ErrorMessage>{formik.errors.name}</ErrorMessage>
                     ) : null}
                   </FormControl>
                 </Grid>
@@ -187,7 +251,7 @@ function TeacherForm({ teacher, updateStatus, open, setOpen }) {
                   <FormControl>
                     <InputLabel htmlFor="my-input">Phone Number</InputLabel>
                     <Input
-                      error={formik.errors.phone_number}
+                      error={"phone_number" in formik.errors}
                       name="phone_number"
                       type="text"
                       aria-describedby="my-helper-text"
@@ -195,7 +259,7 @@ function TeacherForm({ teacher, updateStatus, open, setOpen }) {
                       onChange={formik.handleChange}
                     />
                     {formik.errors.phone_number ? (
-                      <div className="error">{formik.errors.phone_number}</div>
+                      <ErrorMessage>{formik.errors.phone_number}</ErrorMessage>
                     ) : null}
                   </FormControl>
                 </Grid>
@@ -203,7 +267,7 @@ function TeacherForm({ teacher, updateStatus, open, setOpen }) {
                   <FormControl>
                     <InputLabel htmlFor="my-input">Address</InputLabel>
                     <Input
-                      error={formik.errors.phone_number}
+                      error={"address" in formik.errors}
                       name="address"
                       type="text"
                       aria-describedby="my-helper-text"
@@ -211,33 +275,37 @@ function TeacherForm({ teacher, updateStatus, open, setOpen }) {
                       onChange={formik.handleChange}
                     />
                     {formik.errors.address ? (
-                      <div className="error">{formik.errors.address}</div>
+                      <ErrorMessage>{formik.errors.address}</ErrorMessage>
                     ) : null}
                   </FormControl>
                 </Grid>
               </Grid>
-              <Typography>Classrooms</Typography>
+              {/* <Typography>Classrooms</Typography>
               {teacher &&
                 teacher.classrooms.map((classroom) => (
                   <Button key={classroom.id}>{classroom.name}</Button>
-                ))}
-              <Autocomplete
-                multiple
-                id="tags-outlined"
-                options={classrooms}
-                getOptionLabel={(option) => option.name}
-                onChange={handleAutocompleteChange}
-                isOptionEqualToValue={(option, value) => option.id === value.id}
-                filterSelectedOptions
-                value={selectedValues}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="filterSelectedOptions"
-                    placeholder="Classrooms"
-                  />
-                )}
-              />
+                ))} */}
+              <Grid item={true} xs={12}>
+                <Autocomplete
+                  multiple
+                  id="tags-outlined"
+                  options={classrooms}
+                  getOptionLabel={(option) => option.name}
+                  onChange={handleAutocompleteChange}
+                  isOptionEqualToValue={(option, value) =>
+                    option.id === value.id
+                  }
+                  filterSelectedOptions
+                  value={selectedValues}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Classrooms"
+                      placeholder="Classrooms"
+                    />
+                  )}
+                />
+              </Grid>
               <Button type="submit">
                 {updateStatus ? "update" : "create"}
               </Button>

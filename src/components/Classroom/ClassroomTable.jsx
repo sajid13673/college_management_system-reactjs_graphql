@@ -11,25 +11,9 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { useMutation } from "@apollo/client";
 import { DELETE_CLASSROOM } from "../../Graphql/Mutations";
 import EditIcon from "@mui/icons-material/Edit";
-import { useState } from "react";
-// const StyledHeadTableCell = styled(TableCell)(({ theme }) => ({
-//   [`&.${tableCellClasses.head}`]: {
-//     backgroundColor: theme.palette.common.black,
-//     color: theme.palette.common.white,
-//     textTransform: "uppercase",
-//   },
-//   [`&.${tableCellClasses.body}`]: {
-//     fontSize: 14,
-//   },
-// }));
-
-// const StyledHeadTableCell = withStyles({
-//   root: {
-//     textTransform: "uppercase",
-//   }
-// })(TableCell);
+import { useEffect } from "react";
 export default function ClassroomTable(props) {
-  const [deleteClass, { error }] = useMutation(DELETE_CLASSROOM);
+  const [deleteClass, { error, data }] = useMutation(DELETE_CLASSROOM);
   const StyledHeadTableCell = props.styledHeadTableCell;
 
   const deleteClassroom = (id) => {
@@ -45,6 +29,10 @@ export default function ClassroomTable(props) {
   const handleEdit = (id) => {
     props.handleEdit(id);
   };
+  useEffect(()=>{
+    error && console.log(error.message);
+    data && props.handlegetClassrooms();
+  },[error,data])
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">

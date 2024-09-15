@@ -13,7 +13,7 @@ import Login from "./components/login";
 import ClassroomList from "./components/Classroom/ClassroomList";
 import { Routes, Route } from "react-router-dom";
 import TeacherList from "./components/Teacher/TeacherList";
-import { createTheme, Paper, ThemeProvider } from "@mui/material";
+import { createTheme, Paper, ThemeProvider, Typography } from "@mui/material";
 import StudentList from "./components/Student/StudentList";
 import { styled } from "@mui/material/styles";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
@@ -66,6 +66,14 @@ function App() {
       mode: darkMode ? "dark" : "light",
     },
   });
+  const validateEmail = (str) => {
+    return !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(str)
+  }
+  const ErrorMessage = styled(Typography)({
+    color: 'red',
+    fontSize: 'small',
+    fontStyle: 'italic'
+  })
   useEffect(() => {
     setClient(createClient(link));
   }, [token]);
@@ -74,7 +82,10 @@ function App() {
       <ApolloProvider client={client}>
         <Paper sx={{ minHeight: "100vh" }}>
           <Routes>
-            <Route path="login" element={<Login />} />
+            <Route path="login" element={<Login
+              validateEmail = {(str) => validateEmail(str)} />}
+              ErrorMessage = {ErrorMessage}
+            />
 
             {/* protecteed routes */}
             <Route element={<ProtectedRoute />}>
@@ -108,7 +119,11 @@ function App() {
                       darkMode={darkMode}
                       setDarkMode={(bool) => setDarkMode(bool)}
                     />
-                    <TeacherList styledHeadTableCell={StyledHeadTableCell} />
+                    <TeacherList 
+                      styledHeadTableCell={StyledHeadTableCell}
+                      ErrorMessage = {ErrorMessage} 
+                      validateEmail = {(str) => validateEmail(str)}
+                    />
                   </>
                 }
               />
@@ -120,7 +135,10 @@ function App() {
                       darkMode={darkMode}
                       setDarkMode={(bool) => setDarkMode(bool)}
                     />
-                    <ClassroomList styledHeadTableCell={StyledHeadTableCell} />
+                    <ClassroomList 
+                      styledHeadTableCell={StyledHeadTableCell}
+                      ErrorMessage = {ErrorMessage} 
+                    />
                   </>
                 }
               />
@@ -134,7 +152,11 @@ function App() {
                       darkMode={darkMode}
                       setDarkMode={(bool) => setDarkMode(bool)}
                     />
-                    <StudentList styledHeadTableCell={StyledHeadTableCell} />
+                    <StudentList 
+                      styledHeadTableCell={StyledHeadTableCell}
+                      validateEmail = {(str) => validateEmail(str)}
+                      ErrorMessage = {ErrorMessage} 
+                    />
                   </>
                 }
               />

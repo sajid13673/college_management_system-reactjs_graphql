@@ -44,11 +44,15 @@ function ClassroomList(props) {
       setClassroom(null);
     }
   }, [open]);
-  useEffect(()=>{
+  const handlegetClassrooms = (refetch) => {
+    refetch ? classroomsResponse.refetch() :
     getClassrooms({variables:{
       first: 10,
       page: currentPage
     }})
+  }
+  useEffect(()=>{
+    handlegetClassrooms();
   },[currentPage])
   return (
     <Grid container spacing={2} sx={{ p: 2}}>
@@ -69,7 +73,8 @@ function ClassroomList(props) {
           setUpdateStatus={(bool) => setUpdateStatus(bool)}
           handleEdit={(id) => handleEdit(id)}
           styledHeadTableCell={props.styledHeadTableCell}
-        />
+          handlegetClassrooms = {(refetch = true) => handlegetClassrooms(refetch)}
+          />
         <Stack spacing={2} sx={{ mt: 'auto', mx: 'auto'}}>
           <Pagination count={lastPage} shape="rounded" onChange={hadlePageChange} />
         </Stack>
@@ -79,6 +84,8 @@ function ClassroomList(props) {
         setOpen={(status) => setOpen(status)}
         updateStatus={updateStatus}
         classroom={classroom}
+        ErrorMessage = {props.ErrorMessage}
+        handlegetClassrooms = {(refetch = true) => handlegetClassrooms(refetch)}
       />
     </Grid>
   );

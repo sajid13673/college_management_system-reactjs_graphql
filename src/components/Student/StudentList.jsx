@@ -8,7 +8,7 @@ import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import { useAuth } from "../../utils/authProvider";
 
 function StudentList(props) {
-  const [getStudents, StudentsResponse] = useLazyQuery(GET_ALL_STUDENTS);
+  const [getStudents, studentsResponse] = useLazyQuery(GET_ALL_STUDENTS);
   const [getStudent, { error, loading, data }] =
     useLazyQuery(GET_STUDENT_BY_ID);
   const [students, setStudents] = useState([]);
@@ -32,23 +32,28 @@ function StudentList(props) {
     error && console.log(error);
   }, [data, error]);
   useEffect(() => {
-    if(StudentsResponse.data){
-      setStudents(StudentsResponse.data.Students.data);
-      setLastPage(StudentsResponse.data.Students.paginatorInfo.lastPage)
+    if(studentsResponse.data){
+      setStudents(studentsResponse.data.Students.data);
+      setLastPage(studentsResponse.data.Students.paginatorInfo.lastPage)
     }
-    StudentsResponse.data && console.log(StudentsResponse.data.Students);
-  }, [StudentsResponse]);
+    studentsResponse.data && console.log(studentsResponse.data.Students);
+  }, [studentsResponse]);
   useEffect(() => {
     if (!open) {
       setUpdateStatus(false);
       setStudent(null);
     }
   }, [open]);
-  useEffect(()=>{
+  const handleGetStudents = (refetch) => {
+    console.log("get students");
+    refetch ? studentsResponse.refetch() :
     getStudents({variables:{
       first: 10,
       page: currentPage
     }})
+  }
+  useEffect(()=>{
+    handleGetStudents()
   },[currentPage])
   return (
     <Grid container spacing={2} sx={{ p: 2 }}>
@@ -67,7 +72,8 @@ function StudentList(props) {
           students={students}
           handleEdit={(id) => handleEdit(id)}
           styledHeadTableCell={props.styledHeadTableCell}
-        />
+          handleGetStudents = {(refetch = true) => handleGetStudents(refetch)} 
+          />
         <Stack spacing={2} sx={{ mt: 'auto', mx: 'auto'}}>
           <Pagination count={lastPage} shape="rounded" onChange={hadlePageChange} />
         </Stack>
@@ -77,7 +83,10 @@ function StudentList(props) {
         open={open}
         setOpen={(bool) => setOpen(bool)}
         student={student}
-      />
+        validateEmail = {(str) => props.validateEmail(str)}
+        ErrorMessage = {props.ErrorMessage}
+        handleGetStudents = {(refetch = true) => handleGetStudents(refetch)} 
+        />
     </Grid>
   );
 }
