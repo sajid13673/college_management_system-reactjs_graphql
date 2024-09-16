@@ -34,10 +34,9 @@ export default function ClassroomTable(props) {
     data && props.handlegetClassrooms();
   },[error,data])
   return (
-    <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 650 }} aria-label="simple table">
+    <TableContainer component={Paper} sx={{ minWidth: 650, maxWidth: 1200, alignSelf: "center" }}>
+      <Table  aria-label="simple table">
         <TableHead>
-          {/* sx={{ background: "#0d47a1", textTransform: "uppercase"}} */}
           <TableRow>
             <StyledHeadTableCell align="center">name</StyledHeadTableCell>
             <StyledHeadTableCell align="center">year</StyledHeadTableCell>
