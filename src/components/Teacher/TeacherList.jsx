@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import { useLazyQuery } from "@apollo/client";
 import { GET_ALL_TEACHERS, GET_TEACHER_BY_ID } from "../../Graphql/Queries";
 import TeacherTable from "./TeacherTable";
-import { Button, Grid, Pagination, Stack } from "@mui/material";
+import { Button, Grid, Pagination, Stack, Typography } from "@mui/material";
 import TeacherForm from "./TeacherForm";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 
-function TeacherList({styledHeadTableCell, ErrorMessage, validateEmail}) {
+function TeacherList({styledHeadTableCell, ErrorMessage, validateEmail, modalBoxstyle}) {
   const [getTeachers, teachersResponse] = useLazyQuery(GET_ALL_TEACHERS);
   const [getTeacher, { error, loading, data }] =
     useLazyQuery(GET_TEACHER_BY_ID);
@@ -96,7 +96,8 @@ function TeacherList({styledHeadTableCell, ErrorMessage, validateEmail}) {
         ErrorMessage={ErrorMessage}
         validateEmail={(str) => validateEmail(str)}
         handleGetTeachers={(refetch = true) => handleGetTeachers(refetch)}
-      />
+        modalBoxstyle = {modalBoxstyle}
+        />
     </Grid>
   );
 }

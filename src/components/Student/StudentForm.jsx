@@ -2,7 +2,6 @@ import {
   Autocomplete,
   Box,
   Button,
-  Container,
   FormControl,
   Grid,
   Input,
@@ -42,6 +41,7 @@ function StudentForm({
   ErrorMessage,
   validateEmail,
   handleGetStudents,
+  modalBoxstyle,
 }) {
   const [tabValue, setTabValue] = useState("1");
   const handleChange = (event, newValue) => {
@@ -177,7 +177,7 @@ function StudentForm({
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
-      <Container className="pa-2" maxWidth="sm" style={{ background: "white" }}>
+      <Box sx={modalBoxstyle}>
         <TabContext value={tabValue}>
           <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
             <TabList
@@ -195,13 +195,10 @@ function StudentForm({
           </Box>
           <form onSubmit={formik.handleSubmit}>
             <TabPanel value="1">
-              <Grid item={true} xs={12}>
-                <Typography variant="h3">
+            <Box sx={{ display: "grid", gap: 3 }}>
+            <Typography variant="h4">
                   {updateStatus ? "UPDATE STUDENT" : "CREATE STUDENT"}
                 </Typography>
-              </Grid>
-              <Grid container spacing={2}>
-                <Grid item={true} xs={12}>
                   <FormControl>
                     <InputLabel htmlFor="my-input">email</InputLabel>
                     <Input
@@ -216,8 +213,6 @@ function StudentForm({
                       <ErrorMessage>{formik.errors.email}</ErrorMessage>
                     ) : null}
                   </FormControl>
-                </Grid>
-                <Grid item={true} xs={12}>
                   <FormControl>
                     <InputLabel htmlFor="my-input">Password</InputLabel>
                     <Input
@@ -232,17 +227,13 @@ function StudentForm({
                       <ErrorMessage>{formik.errors.password}</ErrorMessage>
                     ) : null}
                   </FormControl>
-                </Grid>
-              </Grid>
+                  </Box>
             </TabPanel>
             <TabPanel value="2">
-              <Grid item={true} xs={12}>
-                <Typography variant="h3">
+            <Box sx={{ display: "grid", gap: 3 }}>
+            <Typography variant="h4">
                   {updateStatus ? "UPDATE STUDENT" : "CREATE STUDENT"}
                 </Typography>
-              </Grid>
-              <Grid container spacing={2}>
-                <Grid item={true} xs={12}>
                   <FormControl>
                     <InputLabel htmlFor="my-input">Name</InputLabel>
                     <Input
@@ -257,8 +248,6 @@ function StudentForm({
                       <ErrorMessage>{formik.errors.name}</ErrorMessage>
                     ) : null}
                   </FormControl>
-                </Grid>
-                <Grid item={true} xs={12}>
                   <FormControl>
                     <InputLabel htmlFor="my-input">Phone Number</InputLabel>
                     <Input
@@ -273,8 +262,6 @@ function StudentForm({
                       <ErrorMessage>{formik.errors.phone_number}</ErrorMessage>
                     ) : null}
                   </FormControl>
-                </Grid>
-                <Grid item={true} xs={12}>
                   <FormControl>
                     <InputLabel htmlFor="my-input">Address</InputLabel>
                     <Input
@@ -289,14 +276,11 @@ function StudentForm({
                       <ErrorMessage>{formik.errors.address}</ErrorMessage>
                     ) : null}
                   </FormControl>
-                </Grid>
-              </Grid>
-              <Grid item xs={12}>
                 <FormControl>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DemoContainer components={["DatePicker"]}>
                       <DatePicker
-                        label="Basic date picker"
+                        label="Date of birth"
                         onChange={(newValue, error) =>
                           handleDateChange(newValue, error)
                         }
@@ -310,7 +294,6 @@ function StudentForm({
                     <ErrorMessage>{formik.errors.date_of_birth}</ErrorMessage>
                   ) : null}
                 </FormControl>
-                <Typography>Classrooms</Typography>
                 {student &&
                   student.classrooms.map((classroom) => (
                     <Button key={classroom.id}>{classroom.name}</Button>
@@ -326,19 +309,19 @@ function StudentForm({
                   renderInput={(params) => (
                     <TextField
                       {...params}
-                      label="filterSelectedOptions"
+                      label="Classrooms"
                       placeholder="Classrooms"
                     />
                   )}
                 />
-              </Grid>
-              <Button type="submit">
+              <Button type="submit" variant="contained">
                 {updateStatus ? "update" : "create"}
               </Button>
+              </Box>
             </TabPanel>
           </form>
         </TabContext>
-      </Container>
+      </Box>
     </Modal>
   );
 }

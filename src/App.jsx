@@ -65,7 +65,13 @@ function App() {
     palette: {
       mode: darkMode ? "dark" : "light",
     },
+    typography:{
+      h4: {
+        color: "#7393B3"
+      }
+    }
   });
+
   const validateEmail = (str) => {
     return !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(str)
   }
@@ -74,6 +80,17 @@ function App() {
     fontSize: 'small',
     fontStyle: 'italic'
   })
+  const modalBoxstyle = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    width: {xs: "100^%", md:450},
+    transform: 'translate(-50%, -50%)',
+    bgcolor: 'background.paper',
+    border: '2px solid #000',
+    boxShadow: 24,
+    p: 2,
+  };
   useEffect(() => {
     setClient(createClient(link));
   }, [token]);
@@ -123,6 +140,7 @@ function App() {
                       styledHeadTableCell={StyledHeadTableCell}
                       ErrorMessage = {ErrorMessage} 
                       validateEmail = {(str) => validateEmail(str)}
+                      modalBoxstyle = {modalBoxstyle}
                     />
                   </>
                 }
@@ -138,6 +156,7 @@ function App() {
                     <ClassroomList 
                       styledHeadTableCell={StyledHeadTableCell}
                       ErrorMessage = {ErrorMessage} 
+                      modalBoxstyle = {modalBoxstyle}
                     />
                   </>
                 }
@@ -156,6 +175,7 @@ function App() {
                       styledHeadTableCell={StyledHeadTableCell}
                       validateEmail = {(str) => validateEmail(str)}
                       ErrorMessage = {ErrorMessage} 
+                      modalBoxstyle = {modalBoxstyle}
                     />
                   </>
                 }

@@ -86,6 +86,7 @@ function StudentList(props) {
         validateEmail = {(str) => props.validateEmail(str)}
         ErrorMessage = {props.ErrorMessage}
         handleGetStudents = {(refetch = true) => handleGetStudents(refetch)} 
+        modalBoxstyle = {props.modalBoxstyle}
         />
     </Grid>
   );

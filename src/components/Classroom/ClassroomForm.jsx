@@ -1,12 +1,10 @@
 import {
+  Box,
   Button,
-  Container,
   FormControl,
-  Grid,
   Input,
   InputLabel,
   Modal,
-  styled,
   Typography,
 } from "@mui/material";
 import { useFormik } from "formik";
@@ -16,7 +14,6 @@ import {
   UPDATE_CLASSROOM_MUTATION,
 } from "../../Graphql/Mutations";
 import { useMutation } from "@apollo/client";
-import { validate } from "graphql";
 import moment from "moment";
 
 function ClassroomForm({
@@ -26,6 +23,7 @@ function ClassroomForm({
   setOpen,
   ErrorMessage,
   handlegetClassrooms,
+  modalBoxstyle,
 }) {
   const [createClassroom, createResponse] = useMutation(
     CREATE_CLASSROOM_MUTATION
@@ -98,16 +96,12 @@ function ClassroomForm({
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
-      <Container className="pa-2" maxWidth="sm" style={{ background: "white" }}>
-        <Grid item={true} xs={12}>
-          <Typography variant="h3">
+        <form onSubmit={formik.handleSubmit}>
+        <Box sx={modalBoxstyle} >
+        <Box sx={{ display: "grid", gap: 3, p:{ xs:2, md:4} }}>
+          <Typography variant="h4">
             {updateStatus ? "UPDATE CLASSROOM" : "CREATE CLASSROOM"}
           </Typography>
-        </Grid>
-        {/* <h1>Add Member</h1> */}
-        <form onSubmit={formik.handleSubmit}>
-          <Grid container spacing={2}>
-            <Grid item={true} xs={12}>
               <FormControl>
                 <InputLabel htmlFor="my-input">Name</InputLabel>
                 <Input
@@ -122,8 +116,6 @@ function ClassroomForm({
                   <ErrorMessage>{formik.errors.name}</ErrorMessage>
                 ) : null}
               </FormControl>
-            </Grid>
-            <Grid item={true} xs={12}>
               <FormControl>
                 <InputLabel htmlFor="my-input">Year</InputLabel>
                 <Input
@@ -138,12 +130,11 @@ function ClassroomForm({
                   <ErrorMessage>{formik.errors.year}</ErrorMessage>
                 ) : null}
               </FormControl>
-            </Grid>
-          </Grid>
-          <Button type="submit">{updateStatus ? "update" : "create"}</Button>
-        </form>
-      </Container>
-    </Modal>
+          <Button type="submit" variant="contained">{updateStatus ? "update" : "create"}</Button>
+        </Box>
+      </Box>
+      </form>
+      </Modal>
   );
 }
 

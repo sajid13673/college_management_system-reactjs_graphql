@@ -86,7 +86,8 @@ function ClassroomList(props) {
         classroom={classroom}
         ErrorMessage = {props.ErrorMessage}
         handlegetClassrooms = {(refetch = true) => handlegetClassrooms(refetch)}
-      />
+        modalBoxstyle = {props.modalBoxstyle}
+        />
     </Grid>
   );
 }

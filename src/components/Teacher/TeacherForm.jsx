@@ -2,7 +2,6 @@ import {
   Autocomplete,
   Box,
   Button,
-  Container,
   FormControl,
   Grid,
   Input,
@@ -35,6 +34,7 @@ function TeacherForm({
   ErrorMessage,
   validateEmail,
   handleGetTeachers,
+  modalBoxstyle,
 }) {
   const [tabValue, setTabValue] = useState("1");
 
@@ -46,6 +46,7 @@ function TeacherForm({
   const [selectedValues, setSelectedValues] = useState([]);
   const [createTeacher, createResonse] = useMutation(CREATE_TEACHER_MUTATION);
   const [updateTeacher, updateResponse] = useMutation(UPDATE_TEACHER_MUTATION);
+
   let errors = {};
   const validate = (values) => {
     if (!updateStatus) {
@@ -106,10 +107,6 @@ function TeacherForm({
   useEffect(() => {
     if (updateStatus && teacher) {
       setTabValue("2");
-      // formik.setFieldValue("id", teacher.id);
-      // formik.setFieldValue("name", teacher.name);
-      // formik.setFieldValue("phone_number", teacher.phone_number);
-      // formik.setFieldValue("address", teacher.address);
       formik.setValues({
         ...formik.values,
         id: teacher.id,
@@ -165,7 +162,7 @@ function TeacherForm({
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
-      <Container className="pa-2" maxWidth="sm" style={{ background: "white" }}>
+      <Box sx={modalBoxstyle} >
         <TabContext value={tabValue}>
           <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
             <TabList
@@ -183,14 +180,10 @@ function TeacherForm({
           </Box>
           <form onSubmit={formik.handleSubmit}>
             <TabPanel value="1">
-              <Grid item={true} xs={12}>
-                <Typography variant="h3">
+              <Box sx={{ display: "grid", gap: 3 }}>
+              <Typography variant="h4">
                   {updateStatus ? "UPDATE TEACHER" : "CREATE TEACHER"}
                 </Typography>
-              </Grid>
-              {/* <h1>Add Member</h1> */}
-              <Grid container spacing={2}>
-                <Grid item={true} xs={12}>
                   <FormControl>
                     <InputLabel htmlFor="my-input">email</InputLabel>
                     <Input
@@ -205,8 +198,6 @@ function TeacherForm({
                       <ErrorMessage>{formik.errors.email}</ErrorMessage>
                     ) : null}
                   </FormControl>
-                </Grid>
-                <Grid item={true} xs={12}>
                   <FormControl>
                     <InputLabel htmlFor="my-input">Password</InputLabel>
                     <Input
@@ -221,17 +212,13 @@ function TeacherForm({
                       <ErrorMessage>{formik.errors.password}</ErrorMessage>
                     ) : null}
                   </FormControl>
-                </Grid>
-              </Grid>
+                  </Box>
             </TabPanel>
             <TabPanel value="2">
-              <Grid item={true} xs={12}>
-                <Typography variant="h3">
+              <Box sx={{ display: "grid", gap: 3 }}>
+                <Typography variant="h4">
                   {updateStatus ? "UPDATE TEACHER" : "CREATE TEACHER"}
                 </Typography>
-              </Grid>
-              <Grid container spacing={2}>
-                <Grid item={true} xs={12}>
                   <FormControl>
                     <InputLabel htmlFor="my-input">Name</InputLabel>
                     <Input
@@ -246,8 +233,6 @@ function TeacherForm({
                       <ErrorMessage>{formik.errors.name}</ErrorMessage>
                     ) : null}
                   </FormControl>
-                </Grid>
-                <Grid item={true} xs={12}>
                   <FormControl>
                     <InputLabel htmlFor="my-input">Phone Number</InputLabel>
                     <Input
@@ -262,9 +247,7 @@ function TeacherForm({
                       <ErrorMessage>{formik.errors.phone_number}</ErrorMessage>
                     ) : null}
                   </FormControl>
-                </Grid>
-                <Grid item={true} xs={12}>
-                  <FormControl>
+                  <FormControl >
                     <InputLabel htmlFor="my-input">Address</InputLabel>
                     <Input
                       error={"address" in formik.errors}
@@ -278,14 +261,6 @@ function TeacherForm({
                       <ErrorMessage>{formik.errors.address}</ErrorMessage>
                     ) : null}
                   </FormControl>
-                </Grid>
-              </Grid>
-              {/* <Typography>Classrooms</Typography>
-              {teacher &&
-                teacher.classrooms.map((classroom) => (
-                  <Button key={classroom.id}>{classroom.name}</Button>
-                ))} */}
-              <Grid item={true} xs={12}>
                 <Autocomplete
                   multiple
                   id="tags-outlined"
@@ -305,14 +280,14 @@ function TeacherForm({
                     />
                   )}
                 />
-              </Grid>
-              <Button type="submit">
+              <Button type="submit" variant="contained">
                 {updateStatus ? "update" : "create"}
               </Button>
+              </Box>
             </TabPanel>
           </form>
         </TabContext>
-      </Container>
+      </Box>
     </Modal>
   );
 }
