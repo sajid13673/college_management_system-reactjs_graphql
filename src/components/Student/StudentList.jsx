@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useQuery, useLazyQuery } from "@apollo/client";
 import { GET_ALL_STUDENTS, GET_STUDENT_BY_ID } from "../../Graphql/Queries";
 import StudentTable from "./StudentTable";
-import { Button, Grid, Pagination, Stack } from "@mui/material";
+import { Button, CircularProgress, Grid, Pagination, Stack } from "@mui/material";
 import StudentForm from "./StudentForm";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import { useAuth } from "../../utils/authProvider";
@@ -35,6 +35,7 @@ function StudentList(props) {
     if(studentsResponse.data){
       setStudents(studentsResponse.data.Students.data);
       setLastPage(studentsResponse.data.Students.paginatorInfo.lastPage)
+      setCurrentPage(studentsResponse.data.Students.paginatorInfo.currentPage)
     }
     studentsResponse.data && console.log(studentsResponse.data.Students);
   }, [studentsResponse]);
@@ -57,6 +58,19 @@ function StudentList(props) {
   },[currentPage])
   return (
     <Grid container spacing={2} sx={{ p: 2 }}>
+      
+     {studentsResponse.loading ? 
+     (
+      <Grid item xs={12} sx={{ display: "flex", mt:20 }}>
+        <CircularProgress
+          sx={{ mx: "auto" }}
+          thickness={6}
+          size={200}
+          variant="indeterminate"
+        ></CircularProgress>
+      </Grid>
+    ):
+     (<>
       {token.role == 'admin' && <Grid item xs={12} md={6} sx={{ mx: "auto" }}>
         <Button
           sx={{ width: "100%" }}
@@ -75,9 +89,10 @@ function StudentList(props) {
           handleGetStudents = {(refetch = true) => handleGetStudents(refetch)} 
           />
         <Stack spacing={2} sx={{ mt: 'auto', mx: 'auto'}}>
-          <Pagination count={lastPage} shape="rounded" onChange={hadlePageChange} />
+          <Pagination count={lastPage} page={currentPage} shape="rounded" onChange={hadlePageChange} />
         </Stack>
       </Grid>
+      </>)}
       <StudentForm
         updateStatus={updateStatus}
         open={open}

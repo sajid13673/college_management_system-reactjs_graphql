@@ -2,11 +2,23 @@ import { useEffect, useState } from "react";
 import { useLazyQuery } from "@apollo/client";
 import { GET_ALL_TEACHERS, GET_TEACHER_BY_ID } from "../../Graphql/Queries";
 import TeacherTable from "./TeacherTable";
-import { Button, Grid, Pagination, Stack, Typography } from "@mui/material";
+import {
+  Button,
+  CircularProgress,
+  Grid,
+  Pagination,
+  Stack,
+  Typography,
+} from "@mui/material";
 import TeacherForm from "./TeacherForm";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 
-function TeacherList({styledHeadTableCell, ErrorMessage, validateEmail, modalBoxstyle}) {
+function TeacherList({
+  styledHeadTableCell,
+  ErrorMessage,
+  validateEmail,
+  modalBoxstyle,
+}) {
   const [getTeachers, teachersResponse] = useLazyQuery(GET_ALL_TEACHERS);
   const [getTeacher, { error, loading, data }] =
     useLazyQuery(GET_TEACHER_BY_ID);
@@ -33,6 +45,7 @@ function TeacherList({styledHeadTableCell, ErrorMessage, validateEmail, modalBox
     if (teachersResponse.data) {
       setTeachers(teachersResponse.data.Teachers.data);
       setLastPage(teachersResponse.data.Teachers.paginatorInfo.lastPage);
+      setCurrentPage(teachersResponse.data.Teachers.paginatorInfo.currentPage);
     }
     teachersResponse.data && console.log(teachersResponse.data.Teachers);
   }, [teachersResponse]);
@@ -58,36 +71,50 @@ function TeacherList({styledHeadTableCell, ErrorMessage, validateEmail, modalBox
   }, [currentPage]);
   return (
     <Grid container spacing={2} sx={{ p: 2 }}>
-      <Grid item xs={12} md={6} sx={{ mx: "auto" }}>
-        <Button
-          sx={{ width: "100%" }}
-          variant="contained"
-          endIcon={<PersonAddIcon />}
-          onClick={() => setOpen(true)}
-        >
-          Create new teacher
-        </Button>
-      </Grid>
-      <Grid
-        item
-        xs={12}
-        minHeight={"60vh"}
-        sx={{ display: "flex", flexDirection: "column", gap: 2 }}
-      >
-        <TeacherTable
-          teachers={teachers}
-          handleEdit={(id) => handleEdit(id)}
-          styledHeadTableCell={styledHeadTableCell}
-          handleGetTeachers={(refetch = true) => handleGetTeachers(refetch)}
-        />
-        <Stack spacing={2} sx={{ mt: "auto", mx: "auto" }}>
-          <Pagination
-            count={lastPage}
-            shape="rounded"
-            onChange={hadlePageChange}
-          />
-        </Stack>
-      </Grid>
+      {teachersResponse.loading ? (
+        <Grid item xs={12} sx={{ display: "flex", mt:20 }}>
+          <CircularProgress
+            sx={{ mx: "auto" }}
+            thickness={6}
+            size={200}
+            variant="indeterminate"
+          ></CircularProgress>
+        </Grid>
+      ) : (
+        <>
+          <Grid item xs={12} md={6} sx={{ mx: "auto" }}>
+            <Button
+              sx={{ width: "100%" }}
+              variant="contained"
+              endIcon={<PersonAddIcon />}
+              onClick={() => setOpen(true)}
+            >
+              Create new teacher
+            </Button>
+          </Grid>
+          <Grid
+            item
+            xs={12}
+            minHeight={"60vh"}
+            sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+          >
+            <TeacherTable
+              teachers={teachers}
+              handleEdit={(id) => handleEdit(id)}
+              styledHeadTableCell={styledHeadTableCell}
+              handleGetTeachers={(refetch = true) => handleGetTeachers(refetch)}
+            />
+            <Stack spacing={2} sx={{ mt: "auto", mx: "auto" }}>
+              <Pagination
+                page={currentPage}
+                count={lastPage}
+                shape="rounded"
+                onChange={hadlePageChange}
+              />
+            </Stack>
+          </Grid>
+        </>
+      )}
       <TeacherForm
         updateStatus={updateStatus}
         open={open}
@@ -96,8 +123,8 @@ function TeacherList({styledHeadTableCell, ErrorMessage, validateEmail, modalBox
         ErrorMessage={ErrorMessage}
         validateEmail={(str) => validateEmail(str)}
         handleGetTeachers={(refetch = true) => handleGetTeachers(refetch)}
-        modalBoxstyle = {modalBoxstyle}
-        />
+        modalBoxstyle={modalBoxstyle}
+      />
     </Grid>
   );
 }

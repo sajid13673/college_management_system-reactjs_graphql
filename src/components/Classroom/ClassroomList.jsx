@@ -3,7 +3,7 @@ import { useQuery, useLazyQuery } from "@apollo/client";
 import { LOAD_CLASSROOMS, GET_CLASSROOM_BY_ID } from "../../Graphql/Queries";
 import ClassroomTable from "./ClassroomTable";
 import ClassroomForm from "./ClassroomForm";
-import { Button, Grid, Icon, Pagination, Stack } from "@mui/material";
+import { Button, CircularProgress, Grid, Icon, Pagination, Stack } from "@mui/material";
 import AddBoxIcon from '@mui/icons-material/AddBox';
 
 function ClassroomList(props) {
@@ -32,6 +32,7 @@ function ClassroomList(props) {
     if(classroomsResponse.data){
       setClassrooms(classroomsResponse.data.classrooms.data);
       setLastPage(classroomsResponse.data.classrooms.paginatorInfo.lastPage)
+      setCurrentPage(classroomsResponse.data.classrooms.paginatorInfo.currentPage)
     }
     classroomsResponse &&
       classroomsResponse.error &&
@@ -56,7 +57,19 @@ function ClassroomList(props) {
   },[currentPage])
   return (
     <Grid container spacing={2} sx={{ p: 2}}>
-      <Grid item xs={12} md={6} sx={{ mx: "auto" }}>
+      {classroomsResponse.loading ? (
+        <Grid item xs={12} sx={{ display: "flex", mt:20 }}>
+          <CircularProgress
+            sx={{ mx: "auto" }}
+            thickness={6}
+            size={200}
+            variant="indeterminate"
+          ></CircularProgress>
+        </Grid>
+      ) :
+        (
+          <>
+        <Grid item xs={12} md={6} sx={{ mx: "auto" }}>
         <Button
           sx={{ width: "100%" }}
           variant="contained"
@@ -76,9 +89,12 @@ function ClassroomList(props) {
           handlegetClassrooms = {(refetch = true) => handlegetClassrooms(refetch)}
           />
         <Stack spacing={2} sx={{ mt: 'auto', mx: 'auto'}}>
-          <Pagination count={lastPage} shape="rounded" onChange={hadlePageChange} />
+          <Pagination count={lastPage} page={currentPage} shape="rounded" onChange={hadlePageChange} />
         </Stack>
       </Grid>
+      </>
+      )
+      }
       <ClassroomForm
         open={open}
         setOpen={(status) => setOpen(status)}
