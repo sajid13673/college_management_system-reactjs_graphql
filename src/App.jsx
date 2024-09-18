@@ -9,12 +9,12 @@ import {
   from,
 } from "@apollo/client";
 import { onError } from "@apollo/client/link/error";
-import Login from "./components/login";
-import ClassroomList from "./components/Classroom/ClassroomList";
+import Login from "./screens/Login/Login";
+import ClassroomList from "./screens/Classroom/ClassroomList";
 import { Routes, Route } from "react-router-dom";
-import TeacherList from "./components/Teacher/TeacherList";
+import TeacherList from "./screens/Teacher/TeacherList";
 import { createTheme, Paper, ThemeProvider, Typography } from "@mui/material";
-import StudentList from "./components/Student/StudentList";
+import StudentList from "./screens/Student/StudentList";
 import { styled } from "@mui/material/styles";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import { ProtectedRoute } from "./utils/protectedRoute";

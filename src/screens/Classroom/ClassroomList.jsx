@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useQuery, useLazyQuery } from "@apollo/client";
 import { LOAD_CLASSROOMS, GET_CLASSROOM_BY_ID } from "../../Graphql/Queries";
-import ClassroomTable from "./ClassroomTable";
-import ClassroomForm from "./ClassroomForm";
+import ClassroomTable from "../../components/Classroom/ClassroomTable";
+import ClassroomForm from "../../components/Classroom/ClassroomForm";
 import { Button, CircularProgress, Grid, Icon, Pagination, Stack } from "@mui/material";
 import AddBoxIcon from '@mui/icons-material/AddBox';
 

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLazyQuery } from "@apollo/client";
 import { GET_ALL_TEACHERS, GET_TEACHER_BY_ID } from "../../Graphql/Queries";
-import TeacherTable from "./TeacherTable";
+import TeacherTable from "../../components/Teacher/TeacherTable";
 import {
   Button,
   CircularProgress,
@@ -10,7 +10,7 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import TeacherForm from "./TeacherForm";
+import TeacherForm from "../../components/Teacher/TeacherForm";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 
 function TeacherList({

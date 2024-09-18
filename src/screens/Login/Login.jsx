@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
 import { Visibility, VisibilityOff } from "@material-ui/icons";
 import { useFormik } from "formik";
-import { LOGIN_MUTATION } from "../Graphql/Mutations";
+import { LOGIN_MUTATION } from "../../Graphql/Mutations"; 
 import { useMutation } from "@apollo/client";
-import { useAuth } from "../utils/authProvider";
+import { useAuth } from "../../utils/authProvider"; 
 import { useNavigate } from "react-router-dom";
 import {
   Alert,

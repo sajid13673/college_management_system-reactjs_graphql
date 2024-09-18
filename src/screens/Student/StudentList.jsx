@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useQuery, useLazyQuery } from "@apollo/client";
 import { GET_ALL_STUDENTS, GET_STUDENT_BY_ID } from "../../Graphql/Queries";
-import StudentTable from "./StudentTable";
+import StudentTable from "../../components/Student/StudentTable";
 import { Button, CircularProgress, Grid, Pagination, Stack } from "@mui/material";
-import StudentForm from "./StudentForm";
+import StudentForm from "../../components/Student/StudentForm";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import { useAuth } from "../../utils/authProvider";
 
