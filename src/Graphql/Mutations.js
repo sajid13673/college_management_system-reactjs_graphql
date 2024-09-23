@@ -150,3 +150,11 @@ export const DELETE_USER = gql`
     deleteUser(id: $id)
   }
 `;
+export const CREATE_CLASS_MATERIAL = gql`
+  mutation createClassMaterial($file: Upload!, $name: String!, $description: String, $classroom_id: ID!) {
+    createClassMaterial(file:$file, name: $name, description:$description, classroom_id: $classroom_id) {
+      name
+      description
+    }
+  }
+`

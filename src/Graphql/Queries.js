@@ -1,5 +1,27 @@
 import { gql } from "@apollo/client";
 
+const roleInfo = `   
+    id
+    name
+    phone_number
+    address
+    classrooms {
+        id
+        name
+        year
+    }`
+export const GET_USER =  gql`
+    query{
+        profile {
+            email,
+            teacher {
+                ${roleInfo} 
+            } ,
+            student {
+            ${roleInfo}    
+            }
+        }
+    }`
 export const LOAD_CLASSROOMS = gql`
     query($first: Int!, $page: Int!) {
         classrooms(first: $first, page: $page) {
@@ -28,9 +50,16 @@ export const GET_ALL_CLASSROOMS = gql`
 export const GET_CLASSROOM_BY_ID = gql`
     query($id: ID!) {
         classroom(id: $id) {
-            id,
-            name,
+            id
+            name
             year
+            classMaterials {
+            name
+            description
+            file{
+                name
+            }
+        }
         }
     }
     `

@@ -78,10 +78,9 @@ const MaterialUISwitch = styled(Switch)(({ theme }) => ({
 
 function Header(props) {
   const user = React.useState(JSON.parse(localStorage.getItem("userData")));
-  const [pages, setPages] = React.useState(["class"]);
+  const [pages, setPages] = React.useState(["classroom"]);
   const {setToken, token} = useAuth();
   const [logout, {data, loading, error}] = useMutation(LOGOUT_MUTATION);
-  console.log(user[0].role);
 
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
@@ -108,7 +107,7 @@ function Header(props) {
     if (role == "admin") {
       setPages(["classroom", "teacher", "student"]);
     } else if (role == "teacher") {
-      setPages(["student", "class"]);
+      setPages(["classroom", "student"]);
     }
   }, [token]);
   React.useEffect(()=>{

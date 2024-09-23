@@ -20,6 +20,7 @@
     "@mui/material": "^5.16.7",
     "@mui/styles": "^5.16.7",
     "@mui/x-date-pickers": "^7.14.0",
+    "apollo-upload-client": "^18.0.1",
     "dayjs": "^1.11.13",
     "formik": "^2.4.6",
     "graphql": "^16.9.0",

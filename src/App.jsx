@@ -19,6 +19,10 @@ import { styled } from "@mui/material/styles";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import { ProtectedRoute } from "./utils/protectedRoute";
 import { useAuth } from "./utils/authProvider";
+import { GET_USER } from "./Graphql/Queries";
+import ClassroomInfo from "./screens/Classroom/ClassroomInfo";
+import createUploadLink from "apollo-upload-client/createUploadLink.mjs";
+// import WebClassList from "./components/Classroom/UserClassroomList";
 
 const errorLink = onError(({ graphqlErrors, networkError }) => {
   if (graphqlErrors) {
@@ -39,7 +43,7 @@ function App() {
   const { token } = useAuth();
   const link = from([
     errorLink,
-    new HttpLink({
+    new createUploadLink({
       uri: "http://127.0.0.1:8000/graphql",
       headers: {
         Authorization: token ? `Bearer ${token.token}` : "",
@@ -48,6 +52,15 @@ function App() {
   ]);
   const [client, setClient] = useState(createClient(link));
   const [darkMode, setDarkMode] = useState(false);
+  const [user, setUser] = useState()
+  const getUser = async () => {
+    if(client){
+      const res = await client.query({
+        query: GET_USER
+      })
+      res.data && (console.log(res.data.profile),setUser(res.data.profile))
+    }
+  }
   const StyledHeadTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
       backgroundColor: darkMode ? "#325168" : "#00599C",
@@ -69,7 +82,7 @@ function App() {
       h4: {
         color: "#7393B3"
       }
-    }
+    },
   });
 
   const validateEmail = (str) => {
@@ -94,6 +107,9 @@ function App() {
   useEffect(() => {
     setClient(createClient(link));
   }, [token]);
+  useEffect(()=>{
+    getUser()
+  },[client])
   return (
     <ThemeProvider theme={theme}>
       <ApolloProvider client={client}>
@@ -116,13 +132,31 @@ function App() {
                 }
               />
               <Route
-                path="class"
+                path="classroom"
                 element={
                   <>
                     <Header
                       darkMode={darkMode}
                       setDarkMode={(bool) => setDarkMode(bool)}
                     />
+                    <ClassroomList 
+                      StyledHeadTableCell={StyledHeadTableCell}
+                      ErrorMessage = {ErrorMessage} 
+                      modalBoxstyle = {modalBoxstyle}
+                      user = {user}
+                      />
+                  </>
+                }
+              />
+              <Route
+                path="classroom/:id"
+                element={
+                  <>
+                    <Header
+                      darkMode={darkMode}
+                      setDarkMode={(bool) => setDarkMode(bool)}
+                    />
+                    <ClassroomInfo/>
                   </>
                 }
               />
@@ -140,22 +174,6 @@ function App() {
                       styledHeadTableCell={StyledHeadTableCell}
                       ErrorMessage = {ErrorMessage} 
                       validateEmail = {(str) => validateEmail(str)}
-                      modalBoxstyle = {modalBoxstyle}
-                    />
-                  </>
-                }
-              />
-              <Route
-                path="classroom"
-                element={
-                  <>
-                    <Header
-                      darkMode={darkMode}
-                      setDarkMode={(bool) => setDarkMode(bool)}
-                    />
-                    <ClassroomList 
-                      styledHeadTableCell={StyledHeadTableCell}
-                      ErrorMessage = {ErrorMessage} 
                       modalBoxstyle = {modalBoxstyle}
                     />
                   </>

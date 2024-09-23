@@ -195,87 +195,87 @@ function StudentForm({
           </Box>
           <form onSubmit={formik.handleSubmit}>
             <TabPanel value="1">
-            <Box sx={{ display: "grid", gap: 3 }}>
-            <Typography variant="h4">
+              <Box sx={{ display: "grid", gap: 3 }}>
+                <Typography variant="h4">
                   {updateStatus ? "UPDATE STUDENT" : "CREATE STUDENT"}
                 </Typography>
-                  <FormControl>
-                    <InputLabel htmlFor="my-input">email</InputLabel>
-                    <Input
-                      error={formik.errors.email}
-                      name="email"
-                      type="text"
-                      aria-describedby="my-helper-text"
-                      value={formik.values.email}
-                      onChange={formik.handleChange}
-                    />
-                    {formik.errors.email ? (
-                      <ErrorMessage>{formik.errors.email}</ErrorMessage>
-                    ) : null}
-                  </FormControl>
-                  <FormControl>
-                    <InputLabel htmlFor="my-input">Password</InputLabel>
-                    <Input
-                      error={formik.errors.password}
-                      name="password"
-                      type="text"
-                      aria-describedby="my-helper-text"
-                      value={formik.values.password}
-                      onChange={formik.handleChange}
-                    />
-                    {formik.errors.password ? (
-                      <ErrorMessage>{formik.errors.password}</ErrorMessage>
-                    ) : null}
-                  </FormControl>
-                  </Box>
+                <FormControl>
+                  <InputLabel htmlFor="my-input">email</InputLabel>
+                  <Input
+                    error={formik.errors.email}
+                    name="email"
+                    type="text"
+                    aria-describedby="my-helper-text"
+                    value={formik.values.email}
+                    onChange={formik.handleChange}
+                  />
+                  {formik.errors.email ? (
+                    <ErrorMessage>{formik.errors.email}</ErrorMessage>
+                  ) : null}
+                </FormControl>
+                <FormControl>
+                  <InputLabel htmlFor="my-input">Password</InputLabel>
+                  <Input
+                    error={formik.errors.password}
+                    name="password"
+                    type="text"
+                    aria-describedby="my-helper-text"
+                    value={formik.values.password}
+                    onChange={formik.handleChange}
+                  />
+                  {formik.errors.password ? (
+                    <ErrorMessage>{formik.errors.password}</ErrorMessage>
+                  ) : null}
+                </FormControl>
+              </Box>
             </TabPanel>
             <TabPanel value="2">
-            <Box sx={{ display: "grid", gap: 3 }}>
-            <Typography variant="h4">
+              <Box sx={{ display: "grid", gap: 3 }}>
+                <Typography variant="h4">
                   {updateStatus ? "UPDATE STUDENT" : "CREATE STUDENT"}
                 </Typography>
-                  <FormControl>
-                    <InputLabel htmlFor="my-input">Name</InputLabel>
-                    <Input
-                      error={formik.errors.name}
-                      name="name"
-                      type="text"
-                      aria-describedby="my-helper-text"
-                      value={formik.values.name}
-                      onChange={formik.handleChange}
-                    />
-                    {formik.errors.name ? (
-                      <ErrorMessage>{formik.errors.name}</ErrorMessage>
-                    ) : null}
-                  </FormControl>
-                  <FormControl>
-                    <InputLabel htmlFor="my-input">Phone Number</InputLabel>
-                    <Input
-                      error={formik.errors.phone_number}
-                      name="phone_number"
-                      type="text"
-                      aria-describedby="my-helper-text"
-                      value={formik.values.phone_number}
-                      onChange={formik.handleChange}
-                    />
-                    {formik.errors.phone_number ? (
-                      <ErrorMessage>{formik.errors.phone_number}</ErrorMessage>
-                    ) : null}
-                  </FormControl>
-                  <FormControl>
-                    <InputLabel htmlFor="my-input">Address</InputLabel>
-                    <Input
-                      error={formik.errors.phone_number}
-                      name="address"
-                      type="text"
-                      aria-describedby="my-helper-text"
-                      value={formik.values.address}
-                      onChange={formik.handleChange}
-                    />
-                    {formik.errors.address ? (
-                      <ErrorMessage>{formik.errors.address}</ErrorMessage>
-                    ) : null}
-                  </FormControl>
+                <FormControl>
+                  <InputLabel htmlFor="my-input">Name</InputLabel>
+                  <Input
+                    error={formik.errors.name}
+                    name="name"
+                    type="text"
+                    aria-describedby="my-helper-text"
+                    value={formik.values.name}
+                    onChange={formik.handleChange}
+                  />
+                  {formik.errors.name ? (
+                    <ErrorMessage>{formik.errors.name}</ErrorMessage>
+                  ) : null}
+                </FormControl>
+                <FormControl>
+                  <InputLabel htmlFor="my-input">Phone Number</InputLabel>
+                  <Input
+                    error={formik.errors.phone_number}
+                    name="phone_number"
+                    type="text"
+                    aria-describedby="my-helper-text"
+                    value={formik.values.phone_number}
+                    onChange={formik.handleChange}
+                  />
+                  {formik.errors.phone_number ? (
+                    <ErrorMessage>{formik.errors.phone_number}</ErrorMessage>
+                  ) : null}
+                </FormControl>
+                <FormControl>
+                  <InputLabel htmlFor="my-input">Address</InputLabel>
+                  <Input
+                    error={formik.errors.phone_number}
+                    name="address"
+                    type="text"
+                    aria-describedby="my-helper-text"
+                    value={formik.values.address}
+                    onChange={formik.handleChange}
+                  />
+                  {formik.errors.address ? (
+                    <ErrorMessage>{formik.errors.address}</ErrorMessage>
+                  ) : null}
+                </FormControl>
                 <FormControl>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DemoContainer components={["DatePicker"]}>
@@ -314,9 +314,9 @@ function StudentForm({
                     />
                   )}
                 />
-              <Button type="submit" variant="contained">
-                {updateStatus ? "update" : "create"}
-              </Button>
+                <Button type="submit" variant="contained">
+                  {updateStatus ? "update" : "create"}
+                </Button>
               </Box>
             </TabPanel>
           </form>
