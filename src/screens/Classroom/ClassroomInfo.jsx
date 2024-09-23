@@ -27,6 +27,7 @@ import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { GET_CLASSROOM_BY_ID } from "../../Graphql/Queries";
 import { Formik, useFormik } from "formik";
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import { useAuth } from "../../utils/authProvider";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -43,6 +44,8 @@ const StyledTab = styled(Tab)({
   width: "100%",
 })
 function ClassroomInfo() {
+  const {token} = useAuth()
+  console.log(token);
   const { id } = useParams();
   const { data, error, loading, refetch } = useQuery(GET_CLASSROOM_BY_ID, {
     variables: { id: id },
@@ -114,7 +117,7 @@ function ClassroomInfo() {
                 </TabList>
               </Box>
               <TabPanel value={"1"} sx={{ display: "flex", flexDirection: 'column', gap: 1 }}>
-                <form onSubmit={formik.handleSubmit}>
+                {token.role === 'teacher' && (<form onSubmit={formik.handleSubmit}>
                   <Box
                     sx={{
                       display: "grid",
@@ -199,7 +202,7 @@ function ClassroomInfo() {
                       submit
                     </Button>
                   </Box>
-                </form>
+                </form>)}
                 {classroom.classMaterials && classroom.classMaterials.map((material)=>(
                   <Box key={material.id} sx={{ display: 'flex', flexDirection: 'column' }}>
                     <Button variant="text" sx={{ justifyContent: 'flex-start', width: '100%' }}>{material.name}</Button>
