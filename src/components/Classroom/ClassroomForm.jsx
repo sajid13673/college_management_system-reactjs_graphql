@@ -66,6 +66,7 @@ function ClassroomForm({
     if (updateStatus && classroom) {
       formik.setValues({
         ...formik.values,
+        id: classroom.id,
         name: classroom.name,
         year: classroom.year,
       });
