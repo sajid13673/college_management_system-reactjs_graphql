@@ -54,6 +54,7 @@ export const GET_CLASSROOM_BY_ID = gql`
             name
             year
             classMaterials {
+            id
             name
             description
             file{
