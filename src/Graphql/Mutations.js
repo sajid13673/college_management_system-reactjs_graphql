@@ -158,3 +158,11 @@ export const CREATE_CLASS_MATERIAL = gql`
     }
   }
 `
+export const DELETE_CLASS_MATERIAL = gql`
+  mutation deleteClassMaterial($id: ID!) {
+    deleteClassMaterial(id: $id) {
+      id
+      name
+    }
+  }
+`

@@ -22,7 +22,7 @@ import {
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useMutation, useQuery } from "@apollo/client";
-import { CREATE_CLASS_MATERIAL } from "../../Graphql/Mutations";
+import { CREATE_CLASS_MATERIAL, DELETE_CLASS_MATERIAL } from "../../Graphql/Mutations";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { GET_CLASSROOM_BY_ID } from "../../Graphql/Queries";
 import { Formik, useFormik } from "formik";
@@ -45,7 +45,6 @@ const StyledTab = styled(Tab)({
 })
 function ClassroomInfo() {
   const {token} = useAuth()
-  console.log(token);
   const { id } = useParams();
   const { data, error, loading, refetch } = useQuery(GET_CLASSROOM_BY_ID, {
     variables: { id: id },
@@ -67,6 +66,7 @@ function ClassroomInfo() {
   const [createClassMaterial, classMaterialResponse] = useMutation(
     CREATE_CLASS_MATERIAL
   );
+  const [deleteClassMaterial, deleteClassMaterialResponse] = useMutation(DELETE_CLASS_MATERIAL);
   const handleChange = (event, newValue) => {
     setTabValue(newValue);
   };
@@ -80,9 +80,11 @@ function ClassroomInfo() {
   }, [data, error]);
 
   useEffect(()=>{
-    classMaterialResponse.data && (refetch());
+    classMaterialResponse.data && (refetch(), formik.resetForm());
     classMaterialResponse.error && console.log(classMaterialResponse.error.message);
-  },[classMaterialResponse.data, classMaterialResponse.error])
+    deleteClassMaterialResponse.data && refetch();
+    deleteClassMaterialResponse.error && (console.log(deleteClassMaterialResponse.error.message));
+  },[classMaterialResponse.data, classMaterialResponse.error, deleteClassMaterialResponse.data, deleteClassMaterialResponse.error])
 
   return (
     <Grid container spacing={2} sx={{ p: 3 }}>
@@ -205,7 +207,10 @@ function ClassroomInfo() {
                 </form>)}
                 {classroom.classMaterials && classroom.classMaterials.map((material)=>(
                   <Box key={material.id} sx={{ display: 'flex', flexDirection: 'column' }}>
-                    <Button variant="text" sx={{ justifyContent: 'flex-start', width: '100%' }}>{material.name}</Button>
+                    <ButtonGroup >
+                    <Button variant="text"  sx={{ justifyContent: 'flex-start', width: '100%' }}>{material.name}</Button>
+                    <IconButton sx={{ ml: 'auto' }} onClick={()=>deleteClassMaterial({variables: {id: material.id}})}><DeleteForeverIcon color="error"/></IconButton>
+                    </ButtonGroup>
                     <Typography variant="body2" color={'gray'} ml={2}>{material.description}</Typography>
                     <Divider sx={{mt: 1.5}}/>
                   </Box>
