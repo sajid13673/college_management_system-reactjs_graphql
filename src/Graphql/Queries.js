@@ -59,6 +59,8 @@ export const GET_CLASSROOM_BY_ID = gql`
         description
         file {
           name
+          link
+          size
         }
       }
       classNotes {

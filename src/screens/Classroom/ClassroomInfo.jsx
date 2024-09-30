@@ -14,6 +14,7 @@ import {
   IconButton,
   Input,
   InputLabel,
+  Link,
   styled,
   Tab,
   Typography,
@@ -296,12 +297,7 @@ function ClassroomInfo({ StyledTabBox, textAreaStyle }) {
                       sx={{ display: "flex", flexDirection: "column" }}
                     >
                       <ButtonGroup>
-                        <Button
-                          variant="text"
-                          sx={{ justifyContent: "flex-start", width: "100%" }}
-                        >
-                          {material.name}
-                        </Button>
+                        <Button sx={{ justifyContent: "flex-start", width: "100%" }} target="_blank" href={material.file.link} underline="none" variant="text">{material.name}</Button>
                         {token.role === "teacher" && (<IconButton
                           sx={{ ml: "auto" }}
                           onClick={() =>
@@ -382,7 +378,8 @@ function ClassroomInfo({ StyledTabBox, textAreaStyle }) {
                         sx={{ p: 1 }}
                       >
                         <Typography
-                          variant="h5"
+                          variant="h6"
+                          textTransform="uppercase"
                           sx={{ justifyContent: "flex-start", width: "100%" }}
                         >
                           {note.title}
