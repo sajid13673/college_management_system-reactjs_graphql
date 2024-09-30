@@ -36,6 +36,7 @@ import { useFormik } from "formik";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { useAuth } from "../../utils/authProvider";
 import CloseIcon from "@mui/icons-material/Close";
+import { Opacity } from "@material-ui/icons";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -48,8 +49,17 @@ const VisuallyHiddenInput = styled("input")({
   whiteSpace: "nowrap",
   width: 1,
 });
-
 function ClassroomInfo({ StyledTabBox, textAreaStyle }) {
+  const StyledTab = styled(Tab)(({ theme }) => ({
+    fontWeight: 600,
+    fontSize: 12,
+    '&:hover':{textShadow: '0 0.5em 0.5em -0.4em' ,
+      transform: 'translateY(-0.25em)'},
+    '&.selected': {fontSize: 13, boxShadow: 5},
+    [theme.breakpoints.up("sm")]: {
+      width: "80%",
+    },
+  }));
   const { token } = useAuth();
   const { id } = useParams();
   const { data, error, loading, refetch } = useQuery(GET_CLASSROOM_BY_ID, {
@@ -162,23 +172,23 @@ function ClassroomInfo({ StyledTabBox, textAreaStyle }) {
           </Grid>
           <Grid item xs={12} md={8}>
             <TabContext value={tabValue}>
-              <StyledTabBox>
+              <StyledTabBox sx={{ boxShadow: 4 }}>
                 <TabList
                   onChange={handleChange}
                   aria-label="lab API tabs example"
                   centered
                 >
-                  <Tab
+                  <StyledTab
+                    classes={{ selected: "selected" }}
                     label="Class Materials"
                     value={"1"}
                     wrapped
-                    sx={{ width: { sm: "80%" } }}
                   />
-                  <Tab
+                  <StyledTab
+                    classes={{ selected: "selected" }}
                     label="Class Notes"
                     value={"2"}
                     wrapped
-                    sx={{ width: { sm: "80%" } }}
                   />
                 </TabList>
               </StyledTabBox>
