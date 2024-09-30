@@ -292,7 +292,7 @@ function ClassroomInfo({ StyledTabBox, textAreaStyle }) {
                         >
                           {material.name}
                         </Button>
-                        <IconButton
+                        {token.role === "teacher" && (<IconButton
                           sx={{ ml: "auto" }}
                           onClick={() =>
                             deleteClassMaterial({
@@ -301,7 +301,7 @@ function ClassroomInfo({ StyledTabBox, textAreaStyle }) {
                           }
                         >
                           <DeleteForeverIcon color="error" />
-                        </IconButton>
+                        </IconButton>)}
                       </ButtonGroup>
                       <Typography variant="body2" color={"gray"} ml={2}>
                         {material.description}
