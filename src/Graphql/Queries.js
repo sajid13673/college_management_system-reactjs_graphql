@@ -48,22 +48,26 @@ export const GET_ALL_CLASSROOMS = gql`
     }
     `
 export const GET_CLASSROOM_BY_ID = gql`
-    query($id: ID!) {
-        classroom(id: $id) {
-            id
-            name
-            year
-            classMaterials {
-            id
-            name
-            description
-            file{
-                name
-            }
+  query ($id: ID!) {
+    classroom(id: $id) {
+      id
+      name
+      year
+      classMaterials {
+        id
+        name
+        description
+        file {
+          name
         }
-        }
+      }
+      classNotes {
+        id
+        title
+      }
     }
-    `
+  }
+`;
 export const GET_ALL_TEACHERS = gql`
     query($first: Int!, $page: Int!) {
         Teachers(first: $first, page: $page) {
@@ -152,3 +156,12 @@ export const GET_STUDENT_BY_ID = gql`
             }
         }
     }`
+export const GET_CLASS_NOTE_BY_ID = gql`
+    query($id: ID!) {
+        classNote(id:$id) {
+            id
+            title
+            description
+        }
+    }
+`

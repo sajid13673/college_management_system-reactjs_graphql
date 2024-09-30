@@ -166,3 +166,19 @@ export const DELETE_CLASS_MATERIAL = gql`
     }
   }
 `
+export const CREATE_CLASS_NOTE = gql`
+  mutation createClassNote($title: String!, $description: String!, $classroom_id: ID!) {
+    createClassNote(title: $title, description:$description, classroom_id: $classroom_id) {
+      title
+      description
+    }
+  }
+`
+export const DELETE_CLASS_NOTE = gql`
+  mutation deleteClassNote($id: ID!) {
+    deleteClassNote(id: $id) {
+      id
+      title
+    }
+  }
+`

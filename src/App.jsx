@@ -13,7 +13,7 @@ import Login from "./screens/Login/Login";
 import ClassroomList from "./screens/Classroom/ClassroomList";
 import { Routes, Route } from "react-router-dom";
 import TeacherList from "./screens/Teacher/TeacherList";
-import { createTheme, Paper, ThemeProvider, Typography } from "@mui/material";
+import { Box, createTheme, Paper, ThemeProvider, Typography } from "@mui/material";
 import StudentList from "./screens/Student/StudentList";
 import { styled } from "@mui/material/styles";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
@@ -93,6 +93,14 @@ function App() {
     fontSize: 'small',
     fontStyle: 'italic'
   })
+  const StyledTabBox = styled(Box)(
+    {
+      borderBottom: 1,
+      borderColor: "divider",
+      background: darkMode ? "#2b4056" : "#a7d0f9",
+      borderRadius: 7,
+    }
+  )
   const modalBoxstyle = {
     position: 'absolute',
     top: '50%',
@@ -104,6 +112,15 @@ function App() {
     boxShadow: 24,
     p: 2,
   };
+  const textAreaStyle = {
+    height: 100,
+    fontFamily: "poppins",
+    padding: 10,
+    border: "1px solid rgba(0, 0, 0, 0.12)",
+    borderRadius: "8px",
+    background: "transparent",
+    color: darkMode ? "#fff" : "#000000DE" ,
+  };
   useEffect(() => {
     setClient(createClient(link));
   }, [token]);
@@ -113,7 +130,7 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <ApolloProvider client={client}>
-        <Paper sx={{ minHeight: "100vh" }}>
+        <Paper sx={{ minHeight: "100vh", minWidth: '18rem' }}>
           <Routes>
             <Route path="login" element={<Login
               validateEmail = {(str) => validateEmail(str)} />}
@@ -156,7 +173,10 @@ function App() {
                       darkMode={darkMode}
                       setDarkMode={(bool) => setDarkMode(bool)}
                     />
-                    <ClassroomInfo/>
+                    <ClassroomInfo
+                    StyledTabBox = {StyledTabBox}
+                    textAreaStyle = {textAreaStyle}
+                    />
                   </>
                 }
               />
